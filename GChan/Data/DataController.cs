@@ -1,221 +1,99 @@
-﻿using GChan.Models.Trackers;
-using System;
+﻿using EFCore.BulkExtensions;
+using GChan.Models.Trackers;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
-using System.Data.SQLite;
-using System.IO;
+using System.Linq;
+using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 
 namespace GChan.Data
 {
-    class DataController
+    public static class DataController
     {
-        /// <summary>
-        /// Current database version, change this when database structure is changed.
+        /// <summary> 
+        /// Make sure this is called before any other data access.
         /// </summary>
-        public const int DATABASE_VERSION = 3;
-
-        private const string DATABASE_FILENAME = "trackers.db";
-        private static readonly string DATABASE_FOLDERNAME = "data";
-        private static readonly string DATABASE_PATH = Path.Combine(AppContext.BaseDirectory, DATABASE_FOLDERNAME, DATABASE_FILENAME);
-        private static readonly string DATABASE_CONNECTION_STRING = "DataSource=" + DATABASE_PATH;
-
-        /// <summary>
-        /// Tables
-        /// </summary>
-        private const string TB_VERSION = "version";
-        private const string TB_THREAD = "thread";
-        private const string TB_BOARD = "board";
-
-        // Columns
-        private const string COL_VERSION = "version";
-        private const string COL_URL = "url";
-
-        // Thread columns
-        private const string COL_SUBJECT = "subject";
-        private const string COL_LAST_SCRAPE = "last_scrape";
-        private const string COL_SAVED_IDS = "saved_ids";
-
-        // Board columns
-        private const string COL_GREATEST_THREAD_ID = "greatest_thread_id";
-
-        static SQLiteConnection _connection = null;
-
-        static object _connectionLock = new object();
-
-        static SQLiteConnection Connection 
-        { 
-            get 
-            {
-                lock (_connectionLock)
-                { 
-                    bool dbExisted = File.Exists(DATABASE_PATH);
-
-                    if (!dbExisted)
-                    {
-                        Directory.CreateDirectory(DATABASE_FOLDERNAME);
-                        SQLiteConnection.CreateFile(DATABASE_PATH);
-                    }
-
-                    if (_connection == null)
-                    {
-                        _connection = new SQLiteConnection(DATABASE_CONNECTION_STRING);
-                        _connection.Open();
-
-                        if (!dbExisted)
-                        {
-                            CreateDB();
-                        }
-                        else
-                        {
-                            UpgradeDB();
-                        }
-                    }
-
-                    return _connection;
-                }
-            } 
-        }
-
-        private static void CreateDB()
+        public static async Task EnsureCreatedAndMigrate()
         {
-            using (var cmd = new SQLiteCommand(Connection))
-            {
-                // Version Table
-                cmd.CommandText = $"DROP TABLE IF EXISTS {TB_VERSION}";
-                cmd.ExecuteNonQuery();
-
-                cmd.CommandText = $"CREATE TABLE {TB_VERSION} ({COL_VERSION} INTEGER PRIMARY KEY NOT NULL)";
-                cmd.ExecuteNonQuery();
-
-                cmd.CommandText = $"INSERT INTO {TB_VERSION} ({COL_VERSION}) VALUES (@{COL_VERSION})";
-                cmd.Parameters.AddWithValue(COL_VERSION, DATABASE_VERSION);
-                cmd.ExecuteNonQuery();
-
-                // Thread Table
-                cmd.CommandText = $"DROP TABLE IF EXISTS {TB_THREAD}";
-                cmd.ExecuteNonQuery();
-
-                cmd.CommandText = $"CREATE TABLE {TB_THREAD} ({COL_URL} TEXT PRIMARY KEY NOT NULL, {COL_SUBJECT} TEXT, {COL_SAVED_IDS} TEXT)";
-                cmd.ExecuteNonQuery();
-
-                // Board Table
-                cmd.CommandText = $"DROP TABLE IF EXISTS {TB_BOARD}";
-                cmd.ExecuteNonQuery();
-
-                cmd.CommandText = $"CREATE TABLE {TB_BOARD} ({COL_URL} TEXT PRIMARY KEY NOT NULL, {COL_GREATEST_THREAD_ID} INTEGER)";
-                cmd.ExecuteNonQuery();
-            }
-        }
-
-        /// <summary>
-        /// Drop the current database and build a new one.
-        /// </summary>
-        private static void UpgradeDB()
-        {
-            int version = -1;
-
-            using (var cmd = new SQLiteCommand(Connection))
-            {
-                cmd.CommandText = $"SELECT * FROM {TB_VERSION}";
-
-                using SQLiteDataReader reader = cmd.ExecuteReader();
-
-                if (reader.Read())
-                {
-                    version = reader.GetInt32(0);
-                }
-            }
-
-            if (version == -1 || version != DATABASE_VERSION)
-            {
-                // TODO: Figure out migration strategies.
-                CreateDB();
-            }
+            using var context = NewContext();
+            await context.Database.MigrateAsync();
         }
 
         /// <summary>
         /// Saves the thread and board lists to disk.
         /// </summary>
-        public static void SaveAll(IList<Thread> threads, IList<Board> boards)
+        public static async Task Save(IList<Thread> threads, IList<Board> boards)
         {
-            SaveThreads(threads);
-            SaveBoards(boards);
+            var threadData = threads.Select(t => new ThreadData(t));
+            var boardData = boards.Select(b => new BoardData(b));
+
+            await using var context = NewContext();
+
+            await context.BulkInsertOrUpdateAsync(boardData);
+            await context.BulkInsertOrUpdateAsync(threadData);
+
+            await context.SaveChangesAsync();
         }
 
-        public static void SaveThreads(IList<Thread> threads)
+        public static async Task<(IReadOnlyList<ThreadData> ThreadData, IReadOnlyList<BoardData> BoardData)> Load()
         {
-            using (var cmd = new SQLiteCommand(Connection))
+            await using var context = NewContext();
+
+            var threadData = await context.ThreadData.ToArrayAsync();
+            var boardData = await context.BoardData.ToArrayAsync();
+
+            return (threadData, boardData);
+        }
+
+        public static async Task RemoveBoard(IEnumerable<Board> boards)
+        {
+            var boardDatas = boards.Select(b => new BoardData(b));
+            await using var context = NewContext();
+
+            try
             {
-                cmd.CommandText = $"DELETE FROM {TB_THREAD}";
-
-                cmd.ExecuteNonQuery();
-
-                for (int i = 0; i < threads.Count; i++)
-                {
-                    cmd.CommandText = $@"INSERT INTO
-                                            {TB_THREAD} ({COL_URL}, {COL_SUBJECT}, {COL_SAVED_IDS}) 
-                                        VALUES 
-                                            (@{COL_URL}, @{COL_SUBJECT}, @{COL_SAVED_IDS})";
-
-                    cmd.Parameters.AddWithValue(COL_URL, threads[i].Url);
-                    cmd.Parameters.AddWithValue(COL_SUBJECT, threads[i].Subject);
-                    cmd.Parameters.AddWithValue(COL_LAST_SCRAPE, threads[i].LastScrape);
-                    cmd.Parameters.AddWithValue(COL_SAVED_IDS, threads[i].SavedAssets.ToJson());
-
-                    cmd.ExecuteNonQuery();
-                }
+                context.BoardData.RemoveRange(boardDatas);
+                await context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException ex) when (ex.Message.Contains("affected") && ex.Message.Contains("row(s)")) // E.g. "Affected 0 row(s)".
+            {
+                // Swallow exceptions when we delete but there was nothing in the database to be deleted.
+                // This will happen if a board is added and removed before being saved to database. We don't care.
             }
         }
 
-        public static IList<LoadedThreadData> LoadThreads()
+        public static async Task RemoveThreads(IEnumerable<Thread> threads)
         {
-            var loadedThreads = new List<LoadedThreadData>();
+            var threadDatas = threads.Select(t => new ThreadData(t));
+            await using var context = NewContext();
 
-            using (var cmd = new SQLiteCommand(Connection))
+            try
             {
-                cmd.CommandText = $"SELECT * FROM {TB_THREAD}";
-
-                using SQLiteDataReader reader = cmd.ExecuteReader();
-                while (reader.Read())
-                {
-                    loadedThreads.Add(new LoadedThreadData(reader));
-                }
+                context.ThreadData.RemoveRange(threadDatas);
+                await context.SaveChangesAsync();
             }
-
-            return loadedThreads;
-        }
-
-        public static void SaveBoards(IList<Board> boards)
-        {
-            using var cmd = new SQLiteCommand(Connection);
-            cmd.CommandText = $"DELETE FROM {TB_BOARD}";
-            cmd.ExecuteNonQuery();
-
-            for (int i = 0; i < boards.Count; i++)
+            catch (DbUpdateConcurrencyException ex) when (ex.Message.Contains("affected") && ex.Message.Contains("row(s)")) // E.g. "Affected 0 row(s)".
             {
-                cmd.CommandText = $@"INSERT INTO {TB_BOARD} ({COL_URL}, {COL_GREATEST_THREAD_ID}) VALUES (@{COL_URL}, @{COL_GREATEST_THREAD_ID})";
-                cmd.Parameters.AddWithValue(COL_URL, boards[i].Url);
-                cmd.Parameters.AddWithValue(COL_GREATEST_THREAD_ID, boards[i].GreatestThreadId);
-
-                cmd.ExecuteNonQuery();
+                // Swallow exceptions when we delete but there was nothing in the database to be deleted.
+                // This will happen if a thread is added and removed before being saved to database. We don't care.
             }
         }
 
-        public static IList<LoadedBoardData> LoadBoards()
+        public static async Task RemoveAllBoards()
         {
-            var loadedBoards = new List<LoadedBoardData>();
+            await using var context = NewContext();
+            await context.BoardData.ExecuteDeleteAsync();
+        }
 
-            using (var cmd = new SQLiteCommand(Connection))
-            {
-                cmd.CommandText = $"SELECT * FROM {TB_BOARD}";
+        public static async Task RemoveAllThreads()
+        {
+            await using var context = NewContext();
+            await context.ThreadData.ExecuteDeleteAsync();
+        }
 
-                using SQLiteDataReader reader = cmd.ExecuteReader();
-                while (reader.Read())
-                {
-                    loadedBoards.Add(new LoadedBoardData(reader));
-                }
-            }
-
-            return loadedBoards;
+        private static DataContext NewContext()
+        {
+            return new DataContext();
         }
     }
 }

@@ -3,7 +3,7 @@ using System;
 using System.Linq;
 using System.Net;
 
-namespace GChan.Helpers
+namespace GChan.Helpers.Extensions
 {
     public static class ExceptionExtensions
     {
@@ -17,7 +17,7 @@ namespace GChan.Helpers
             httpWebResponse = exception.Response as HttpWebResponse;
             var isGoneStatusCode = Tracker.GoneStatusCodes.Contains(httpWebResponse?.StatusCode);
 
-            return isProtocolError && (httpWebResponse != null && isGoneStatusCode);
+            return isProtocolError && httpWebResponse != null && isGoneStatusCode;
         }
 
         public static bool IsGone(this StatusCodeException exception)

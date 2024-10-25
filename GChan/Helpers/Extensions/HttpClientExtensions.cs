@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace GChan.Helpers
+namespace GChan.Helpers.Extensions
 {
     public class StatusCodeException : Exception
     {
@@ -56,7 +56,7 @@ namespace GChan.Helpers
         /// <exception cref="ArgumentNullException"/>
         /// <exception cref="HttpRequestException"/>
         /// <exception cref="StatusCodeException"/>
-        public static async Task<string?> GetStringAsync(
+        public static async Task<string> GetStringAsync(
             this HttpClient client,
             string requestUri,
             DateTimeOffset? ifModifiedSince,
