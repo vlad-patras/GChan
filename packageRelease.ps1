@@ -1,47 +1,30 @@
-# Define paths
-$outputPath = ".\"
-$tempPath = "$env:TEMP\GChanReleaseBuild"
-$zipNameTemplate = "GChan{0}.zip"
-$folderNameTemplate = "GChan{0}"
-
-# Clean up previous temp directory if it exists
-if (Test-Path $tempPath) {
-    Remove-Item -Recurse -Force $tempPath
+$outputDirectory = "$env:TEMP\GChanReleaseBuild"
+if (-not (Test-Path -Path $outputDirectory)) {    # Create outputDirectory if it doesn't already exist.
+    New-Item -Path $outputDirectory -ItemType Directory 
 }
+Remove-Item -Path $outputDirectory -Recurse -Force  # Clean outputDirectory.
 
-# Create new temp directory
-New-Item -ItemType Directory -Force -Path $tempPath
+# Step 1: Publish the dotnet solution
+Write-Host "Publishing GChan project..."
+dotnet publish GChan -c Release -r win-x86 -o $outputDirectory
 
-# Get the assembly version
-$assemblyInfoPath = ".\GChan\Properties\AssemblyInfo.cs"
-$assemblyVersion = Select-String -Pattern 'AssemblyVersion\("([0-9\.]+)"\)' -Path $assemblyInfoPath | ForEach-Object { $_.Matches.Groups[1].Value }
+# Step 2: Extract the version from the .csproj file
+$csprojContent = Get-Content "GChan\GChan.csproj"
+$versionTag = $csprojContent | Select-String "<Version>(.*?)</Version>" | ForEach-Object { $_.Matches.Groups[1].Value }
 
-if (-not $assemblyVersion) {
-    Write-Error "Assembly version not found in AssemblyInfo.cs"
+if (-not $versionTag) {
+    Write-Error "Version not found in the .csproj file."
     exit 1
 }
 
-# Build the release configuration using msbuild
-& msbuild GChan /p:Configuration=Release /p:OutputPath=$tempPath
+$version = $versionTag.Trim()
+Write-Host "Version found: $version"
 
-if ($LASTEXITCODE -ne 0) {
-    Write-Error "Build failed"
-    exit 1
-}
+# Step 3: Pack the published output into a zip file
+$zipFileName = "GChan v$version.zip"
+$zipFilePath = Join-Path -Path (Get-Location) -ChildPath $zipFileName
 
-# Create a new directory inside tempPath with the versioned folder name
-$versionedFolderName = [string]::Format($folderNameTemplate, $assemblyVersion)
-$versionedFolderPath = Join-Path -Path $tempPath -ChildPath $versionedFolderName
-New-Item -ItemType Directory -Force -Path $versionedFolderPath
+Write-Host "Creating zip file: $zipFileName"
+Compress-Archive -Path "$outputDirectory\*" -DestinationPath $zipFilePath -Force
 
-# Move all build output to the versioned folder
-Get-ChildItem -Path $tempPath -Exclude $versionedFolderName | Move-Item -Destination $versionedFolderPath
-
-# Create the zip file
-$zipFileName = [string]::Format($zipNameTemplate, $assemblyVersion)
-$zipFilePath = Join-Path -Path $outputPath -ChildPath $zipFileName
-
-Add-Type -AssemblyName System.IO.Compression.FileSystem
-[System.IO.Compression.ZipFile]::CreateFromDirectory($tempPath, $zipFilePath)
-
-Write-Host "Build and packaging complete: $zipFilePath"
+Write-Host "Packaging complete. Zip file saved as: $zipFileName"
