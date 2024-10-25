@@ -1,5 +1,5 @@
 ﻿using GChan.Data;
-using GChan.Helpers;
+using GChan.Helpers.Extensions;
 using GChan.Properties;
 using Newtonsoft.Json.Linq;
 using System;

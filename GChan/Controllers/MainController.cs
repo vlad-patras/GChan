@@ -1,9 +1,11 @@
 ﻿using GChan.Data;
 using GChan.Forms;
+using GChan.Helpers.Extensions;
 using GChan.Models.Trackers;
 using GChan.Properties;
 using GChan.Services;
 using GChan.ViewModels;
+using NetTopologySuite.Precision;
 using NLog;
 using Onova.Models;
 using System;
@@ -11,6 +13,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -202,17 +205,20 @@ namespace GChan.Controllers
             {
                 if (type == Type.Thread)
                 {
-                    while (Model.Threads.Count > 0)
-                    {
-                        await RemoveThread(Model.Threads.Last());
-                    }
+                    // Threads can fail to removal (e.g. I/O), so try to remove all, not saving to database on each, then do 1 db operation.
+                    var threads = Model.Threads.ToArray();
+                    var removedThreads = await threads.ParallelWhereAsync(async t => await RemoveThread(t, manualRemoval: true, saveToDatabase: false));
+                    await DataController.RemoveThreads(removedThreads);
                 }
                 else // Boards
                 {
+                    // Boards are less likely to fail removal (no I/O upon removal), so no special error handling here.
                     while (Model.Boards.Count > 0)
                     {
-                        await RemoveBoard(Model.Boards.Last());
+                        await RemoveBoard(Model.Boards.Last(), saveToDatabase: false);
                     }
+
+                    await DataController.RemoveAllBoards();
                 }
             }
         }
@@ -254,11 +260,14 @@ namespace GChan.Controllers
             }
         }
 
-        public async Task RemoveBoard(Board board)
+        public async Task RemoveBoard(Board board, bool saveToDatabase = true)
         {
             board.Cancel();
 
-            await DataController.RemoveBoard(board);
+            if (saveToDatabase)
+            {
+                await DataController.RemoveBoard([board]);
+            }
 
             lock (BoardLock)
             {
@@ -278,7 +287,7 @@ namespace GChan.Controllers
         /// Remove a thread from tracking.
         /// </summary>
         /// <param name="thread">Thread to remove.</param>
-        /// <param name="manualRemove">Was this remove initiated by the user or by the scanning routine.</param>
+        /// <param name="manualRemoval">Was this remove initiated by the user or by the scanning routine.</param>
         /// <remarks>
         /// TODO: RemoveThread likely to throw. Info below:
         /// If removing a newly added thread this is likely to fail beacuse files are still being downloaded into the current directory.
@@ -286,11 +295,16 @@ namespace GChan.Controllers
         /// We kind of need a download manager so we can wait for all downloads from this thread to finish before moving dir.
         /// Comment update in bugfix/rate-limiting branch: This is remedied now with a CancellationToken on the thread and files. But we need >= .NET 5 to use cancellation tokens on the ReadAsStringAsync methods.
         /// </remarks>
-        public async Task RemoveThread(Thread thread, bool manualRemove = false)
+        /// <returns>Returns true if removal successful.</returns>
+        public async Task<bool> RemoveThread(Thread thread, bool manualRemoval = false, bool saveToDatabase = true)
         {
             logger.Trace($"Removing thread {thread}.");
             thread.Cancel();
-            await DataController.RemoveThread(thread);
+
+            if (saveToDatabase)
+            {
+                await DataController.RemoveThreads([thread]);
+            }
 
             try
             {
@@ -312,16 +326,21 @@ namespace GChan.Controllers
             {
                 logger.Error(ex, $"Exception occured attempting to remove thread {thread}.");
 
-                if (manualRemove)
+                if (manualRemoval)
                 {
                     MessageBox.Show(
-                        $"An error occured when trying to remove the thread {thread.Subject} ({thread.Id}). Please check the logs file in the ProgramData folder for more information.", 
-                        "Thread Removal Error", 
-                        MessageBoxButtons.OK, 
-                        MessageBoxIcon.Error, 
-                        MessageBoxDefaultButton.Button1);
+                        $"An error occured when trying to remove the thread {thread.Subject} ({thread.Id}). Please check the logs file in the ProgramData folder for more information.",
+                        "Thread Removal Error",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Error,
+                        MessageBoxDefaultButton.Button1
+                    );
                 }
+
+                return false;
             }
+
+            return true;
         }
 
         private void Instance_UpdateCheckFinished(object sender, CheckForUpdatesResult result, bool initiatedByUser)

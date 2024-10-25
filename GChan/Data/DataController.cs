@@ -3,6 +3,7 @@ using GChan.Models.Trackers;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 
 namespace GChan.Data
@@ -44,38 +45,50 @@ namespace GChan.Data
             return (threadData, boardData);
         }
 
-        public static async Task RemoveBoard(Board board)
+        public static async Task RemoveBoard(IEnumerable<Board> boards)
         {
-            var boardData = new BoardData(board);
+            var boardDatas = boards.Select(b => new BoardData(b));
             await using var context = NewContext();
 
             try
             {
-                context.Remove(boardData);
+                context.BoardData.RemoveRange(boardDatas);
                 await context.SaveChangesAsync();
             }
-            catch (DbUpdateConcurrencyException ex) when (ex.Message.Contains("affected 0 row(s)"))
+            catch (DbUpdateConcurrencyException ex) when (ex.Message.Contains("affected") && ex.Message.Contains("row(s)")) // E.g. "Affected 0 row(s)".
             {
                 // Swallow exceptions when we delete but there was nothing in the database to be deleted.
                 // This will happen if a board is added and removed before being saved to database. We don't care.
             }
         }
 
-        public static async Task RemoveThread(Thread Thread)
+        public static async Task RemoveThreads(IEnumerable<Thread> threads)
         {
-            var threadData = new ThreadData(Thread);
+            var threadDatas = threads.Select(t => new ThreadData(t));
             await using var context = NewContext();
 
             try
             {
-                context.Remove(threadData);
+                context.ThreadData.RemoveRange(threadDatas);
                 await context.SaveChangesAsync();
             }
-            catch (DbUpdateConcurrencyException ex) when (ex.Message.Contains("affected 0 row(s)"))
+            catch (DbUpdateConcurrencyException ex) when (ex.Message.Contains("affected") && ex.Message.Contains("row(s)")) // E.g. "Affected 0 row(s)".
             {
                 // Swallow exceptions when we delete but there was nothing in the database to be deleted.
                 // This will happen if a thread is added and removed before being saved to database. We don't care.
             }
+        }
+
+        public static async Task RemoveAllBoards()
+        {
+            await using var context = NewContext();
+            await context.BoardData.ExecuteDeleteAsync();
+        }
+
+        public static async Task RemoveAllThreads()
+        {
+            await using var context = NewContext();
+            await context.ThreadData.ExecuteDeleteAsync();
         }
 
         private static DataContext NewContext()

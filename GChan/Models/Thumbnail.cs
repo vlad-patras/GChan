@@ -1,4 +1,4 @@
-﻿using GChan.Helpers;
+﻿using GChan.Helpers.Extensions;
 using GChan.Properties;
 using GChan.Services;
 using NLog;
