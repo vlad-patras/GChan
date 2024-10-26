@@ -83,7 +83,7 @@ namespace GChan.Forms
             var text = urlTextBox.Text; 
             urlTextBox.Text = string.Empty;   // Clear textbox.
 
-            if (string.IsNullOrWhiteSpace(text) && Clipboard.ContainsText() && Settings.Default.AddUrlFromClipboardWhenTextboxEmpty)
+            if (string.IsNullOrWhiteSpace(text) && Clipboard.ContainsText())
             {
                 text = Clipboard.GetText();
             }

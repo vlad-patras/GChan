@@ -157,30 +157,6 @@ namespace GChan.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool AddUrlFromClipboardWhenTextboxEmpty {
-            get {
-                return ((bool)(this["AddUrlFromClipboardWhenTextboxEmpty"]));
-            }
-            set {
-                this["AddUrlFromClipboardWhenTextboxEmpty"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool StartWithWindowsMinimized {
-            get {
-                return ((bool)(this["StartWithWindowsMinimized"]));
-            }
-            set {
-                this["StartWithWindowsMinimized"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool CheckForUpdatesOnStart {
             get {
@@ -193,7 +169,7 @@ namespace GChan.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("35")]
+        [global::System.Configuration.DefaultSettingValueAttribute("1")]
         public int MaximumConcurrentDownloads {
             get {
                 return ((int)(this["MaximumConcurrentDownloads"]));

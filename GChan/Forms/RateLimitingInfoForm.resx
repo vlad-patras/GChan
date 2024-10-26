@@ -117,19 +117,15 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <metadata name="tooltip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>22, 20</value>
-  </metadata>
-  <metadata name="tooltip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>22, 20</value>
-  </metadata>
-  <metadata name="tooltip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>22, 20</value>
-  </metadata>
-  <data name="userAgentLabel.ToolTip" xml:space="preserve">
-    <value>User-Agent headers are sent with every scraping request. The default value should be fine in most cases but if GChan is getting blocked you may wish to change it to the User-Agent header your browser uses. You should only need to mess with this if you know what you are doing.</value>
+  <data name="label2.Text" xml:space="preserve">
+    <value>Sometime in early 2024 4chan began to introduce network requests rate limiting via Cloudflare. Rate limiting keeps  track of how many requests come from different IP addresses and begins to deny requests if a given IP address is making requests too frequently. If an IP address is rate limited too much it may get completely banned (it happened to me, for months!).
+
+GChan v6 completely rearchitected the scraping routine in order to comply with these limits, all reqeusts to 4chan operate from a single queue, that you can configure the limits of.
+
+The 4chan API documentation (here https://github.com/4chan/4chan-API) suggests not making more than 1 request per second, so it is recommended you keep that setting ON. It is best to just let GChan run in the background to scrape slowly but surely rather than risk getting limited.
+
+You can check if you are being rate limited by opening the log files. You will see occurences of "429" and "Too Many Requests" if you are being limited.
+
+Thumbnails Note: The thumbnail scraping setting only scrapes thumbnails for file types that need it (plain images don't). Thumbnails require their own network request each, so if you have this setting on and are scraping a lot of thumbnail-heavy threads, they will consume a lot of time in the queue. Keep this in mind.</value>
   </data>
-  <metadata name="$this.TrayHeight" type="System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>61</value>
-  </metadata>
 </root>

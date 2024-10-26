@@ -1,4 +1,5 @@
-﻿using GChan.Properties;
+﻿using GChan.Forms;
+using GChan.Properties;
 using Microsoft.Win32;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using System;
@@ -77,15 +78,12 @@ namespace GChan
             chkSaveHtml.Checked = Settings.Default.SaveHtml;
             chkSaveThumbnails.Checked = Settings.Default.SaveThumbnails;
             chkSave.Checked = Settings.Default.SaveListsOnClose;
-            chkTray.Checked = Settings.Default.MinimizeToTray;
+            chkMinimiseToTray.Checked = Settings.Default.MinimizeToTray;
             chkWarn.Checked = Settings.Default.WarnOnClose;
 
             chkStartWithWindows.Checked = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true).GetValueNames().Contains(Utils.PROGRAM_NAME);
-            chkStartWithWindowsMinimized.Checked = Settings.Default.StartWithWindowsMinimized;
 
             renameThreadFolderCheckBox.Checked = Settings.Default.AddThreadSubjectToFolder;
-
-            addUrlFromClipboardWhenTextboxEmpty.Checked = Settings.Default.AddUrlFromClipboardWhenTextboxEmpty;
 
             checkForUpdatesOnStartCheckBox.Checked = Settings.Default.CheckForUpdatesOnStart;
         }
@@ -125,11 +123,9 @@ namespace GChan
             Settings.Default.SaveHtml = chkSaveHtml.Checked;
             Settings.Default.SaveThumbnails = chkSaveThumbnails.Checked;
             Settings.Default.SaveListsOnClose = chkSave.Checked;
-            Settings.Default.MinimizeToTray = chkTray.Checked;
+            Settings.Default.MinimizeToTray = chkMinimiseToTray.Checked;
             Settings.Default.WarnOnClose = chkWarn.Checked;
-            Settings.Default.StartWithWindowsMinimized = chkStartWithWindowsMinimized.Checked;
             Settings.Default.AddThreadSubjectToFolder = renameThreadFolderCheckBox.Checked;
-            Settings.Default.AddUrlFromClipboardWhenTextboxEmpty = addUrlFromClipboardWhenTextboxEmpty.Checked;
             Settings.Default.CheckForUpdatesOnStart = checkForUpdatesOnStartCheckBox.Checked;
 
             Settings.Default.Save();
@@ -137,7 +133,7 @@ namespace GChan
             var registryKey = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
             if (chkStartWithWindows.Checked)
             {
-                var args = (Settings.Default.MinimizeToTray && Settings.Default.StartWithWindowsMinimized) ? $" {Program.TRAY_CMDLINE_ARG}" : "";
+                var args = Settings.Default.MinimizeToTray ? $" {Program.TRAY_CMDLINE_ARG}" : "";
                 registryKey.SetValue(
                     Utils.PROGRAM_NAME,
                     '"' + Application.ExecutablePath + '"' + args
@@ -179,11 +175,13 @@ namespace GChan
 
         private void SetPathButton_Click(object sender, EventArgs e)
         {
-            var openFileDialog = new CommonOpenFileDialog();
-            openFileDialog.IsFolderPicker = true;
-            openFileDialog.Title = "Select Folder";
-            openFileDialog.InitialDirectory = Path.GetPathRoot(Environment.SystemDirectory);
-            
+            var openFileDialog = new CommonOpenFileDialog
+            {
+                IsFolderPicker = true,
+                Title = "Select Folder",
+                InitialDirectory = Path.GetPathRoot(Environment.SystemDirectory)
+            };
+
             if (openFileDialog.ShowDialog() == CommonFileDialogResult.Ok && !string.IsNullOrWhiteSpace(openFileDialog.FileName))
             {
                 directory = openFileDialog.FileName;
@@ -196,21 +194,6 @@ namespace GChan
             Utils.OpenDirectory(directory);
         }
 
-        private void chkTray_CheckedChanged(object sender, EventArgs e)
-        {
-            EnableChkStartWithWindowsMinimizedCheckBox();
-        }
-
-        private void chkStartWithWindows_CheckedChanged(object sender, EventArgs e)
-        {
-            EnableChkStartWithWindowsMinimizedCheckBox();
-        }
-
-        private void EnableChkStartWithWindowsMinimizedCheckBox()
-        {
-            chkStartWithWindowsMinimized.Enabled = chkTray.Checked && chkStartWithWindows.Checked;
-        }
-
         private void renameThreadFolderCheckBox_CheckedChanged(object sender, EventArgs e)
         {
             threadFolderNameFormatLabel.Enabled = renameThreadFolderCheckBox.Checked;
@@ -220,6 +203,12 @@ namespace GChan
         private void chkHTML_CheckedChanged(object sender, EventArgs e)
         {
             chkSaveThumbnails.Enabled = chkSaveHtml.Checked;
+        }
+
+        private void aboutRateLimitingButton_Click(object sender, EventArgs e)
+        {
+            var infoForm = new RateLimitingInfoForm();
+            infoForm.ShowDialog();
         }
     }
 }
