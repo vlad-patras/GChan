@@ -82,7 +82,9 @@ namespace GChan.Trackers
             {
                 htmlPage = web.DownloadString(Url);
                 htmlPage = htmlPage.Replace("f=\"to\"", "f=\"penis\"");
-
+            }
+            using (var web = Utils.CreateWebClient())
+            {
                 var json = web.DownloadString(jsonUrl);
                 jObject = JObject.Parse(json);
             }
