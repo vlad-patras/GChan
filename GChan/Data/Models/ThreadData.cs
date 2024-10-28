@@ -1,4 +1,5 @@
-﻿using GChan.Models;
+﻿using GChan.Data.Models;
+using GChan.Models;
 using GChan.Models.Trackers;
 using Microsoft.EntityFrameworkCore;
 using System;

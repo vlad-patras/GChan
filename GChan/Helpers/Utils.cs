@@ -1,4 +1,5 @@
 ﻿using GChan.Data;
+using GChan.Data.Models;
 using GChan.Models.Trackers;
 using GChan.Models.Trackers.Sites;
 using GChan.Properties;

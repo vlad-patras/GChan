@@ -1,5 +1,6 @@
-﻿using GChan.Data;
+﻿using GChan.Data.Models;
 using NLog;
+using System;
 using System.Net;
 using System.Threading;
 
@@ -33,6 +34,12 @@ namespace GChan.Models.Trackers
         /// e.g. gif, r9k, b
         /// </summary>
         public string BoardCode { get; protected set; }
+
+        /// <summary>
+        /// When this tracker was last succesfully scraped, null if not yet scraped.<br/>
+        /// <see cref="DateTimeOffset"/> because that's what HttpClient header property accepts.
+        /// </summary>
+        public DateTimeOffset? LastScrape { get; internal set; }
 
         /// <summary>
         /// Whether or not to keep scraping this tracker.

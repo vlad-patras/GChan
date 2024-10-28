@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace GChan.Data
+namespace GChan.Data.Models
 {
     public enum Site
     {

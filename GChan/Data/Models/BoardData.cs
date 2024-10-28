@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 using System;
 
-namespace GChan.Data
+namespace GChan.Data.Models
 {
     [PrimaryKey(nameof(Site), nameof(Code))]
     public class BoardData
@@ -17,6 +17,8 @@ namespace GChan.Data
 
         public long GreatestThreadId { get; set; }
 
+        public DateTimeOffset? LastScrape { get; set; }
+
         /// <summary>
         /// Parameterless constructor for Entity Framework.
         /// </summary>
@@ -24,14 +26,10 @@ namespace GChan.Data
 
         public BoardData(Board board)
         {
-            this.Site = board.Site;
-            this.Code = board.BoardCode.Trim('/');
-            this.GreatestThreadId = board.GreatestThreadId;
-        }
-
-        public Expression<Func<BoardData, bool>> EfEquals(BoardData other)
-        {
-            return b => b.Site == other.Site && b.Code == other.Code;
+            Site = board.Site;
+            Code = board.BoardCode.Trim('/');
+            GreatestThreadId = board.GreatestThreadId;
+            LastScrape = board.LastScrape;
         }
     }
 }

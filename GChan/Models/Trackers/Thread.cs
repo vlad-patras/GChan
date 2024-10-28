@@ -65,13 +65,6 @@ namespace GChan.Models.Trackers
 
         public bool Gone { get; protected set; } = false;
 
-        /// <summary>
-        /// When this thread was last succesfully scraped, null if not yet scraped.<br/>
-        /// <see cref="DateTimeOffset"/> because that's what HttpClient header property accepts.
-        /// </summary>
-        // TODO: Does this work on boards too? If so should this be on Tracker instead of Thread?
-        public DateTimeOffset? LastScrape { get; protected set; } = null;
-
         private string? subject = null;
         private int? fileCount = null;
 

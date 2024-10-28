@@ -1,9 +1,9 @@
 ﻿using EFCore.BulkExtensions;
+using GChan.Data.Models;
 using GChan.Models.Trackers;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 
 namespace GChan.Data

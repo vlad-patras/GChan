@@ -2,7 +2,9 @@
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using GChan.Data;
+using GChan.Data.Models;
+using GChan.Helpers.Extensions;
+using System.Threading;
 
 namespace GChan.Models.Trackers.Sites
 {
@@ -15,11 +17,11 @@ namespace GChan.Models.Trackers.Sites
         {
             Site = Site._4chan;
 
-            Match boardCodeMatch = Regex.Match(url, BOARD_CODE_REGEX);
+            var boardCodeMatch = Regex.Match(url, BOARD_CODE_REGEX);
             BoardCode = boardCodeMatch.Groups[0].Value;
         }
 
-        public Board_4Chan(BoardData data) : base($"http://boards.4chan.org/{data.Code}/")
+        public Board_4Chan(BoardData data) : base(data)
         {
             Site = Site._4chan;
             this.BoardCode = data.Code;
@@ -31,11 +33,17 @@ namespace GChan.Models.Trackers.Sites
             return Regex.IsMatch(url, IS_BOARD_REGEX);
         }
 
-        override protected async Task<Thread[]> GetThreadsImpl()
+        override protected async Task<Thread[]?> GetThreadsImpl(CancellationToken cancellationToken)
         {
             var catalogUrl = "http://a.4cdn.org/" + BoardCode + "/catalog.json";
             var client = Utils.GetHttpClient();
-            var json = await client.GetStringAsync(catalogUrl);
+            var json = await client.GetStringAsync(catalogUrl, LastScrape, cancellationToken);
+
+            if (json == null)
+            {
+                return null;
+            }
+
             var jArray = JArray.Parse(json);
 
             var threads = jArray

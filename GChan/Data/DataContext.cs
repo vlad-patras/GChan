@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using GChan.Data.Models;
+using Microsoft.EntityFrameworkCore;
 using System.IO;
 
 namespace GChan.Data

@@ -1,4 +1,6 @@
-﻿using GChan.Services;
+﻿using GChan.Data.Models;
+using GChan.Services;
+using System;
 using System.Linq;
 using System.Net;
 using System.Threading;
@@ -40,7 +42,7 @@ namespace GChan.Models.Trackers
 
         /// <summary>
         /// The greatest Thread ID added to tracking.<br/>
-        /// This is used to ignore old thread ids in <see cref="GetThreadsImpl"/>.
+        /// This is used to ignore old thread ids in <see cref="ProcessAsync"/>.
         /// </summary>
         public long GreatestThreadId { get; set; }
 
@@ -51,18 +53,23 @@ namespace GChan.Models.Trackers
             Type = Type.Board;
         }
 
-        protected abstract Task<Thread[]> GetThreadsImpl();
-
-        public override string ToString()
+        protected Board(BoardData data) : base($"http://boards.4chan.org/{data.Code}/")
         {
-            return $"{SiteDisplayName} - /{BoardCode}/ - ({ThreadCount} Threads)";
+            this.LastScrape = data.LastScrape;
         }
 
         public async Task<ProcessResult> ProcessAsync(CancellationToken cancellationToken)
         {
             try
             {
-                var threads = await GetThreadsImpl();
+                var threads = await GetThreadsImpl(cancellationToken);
+
+                LastScrape = DateTimeOffset.Now;
+
+                if (threads == null)
+                {
+                    return new(this, removeFromQueue: false, newProcessables: []);
+                }
 
                 threadCount = threads.Length;
 
@@ -82,6 +89,16 @@ namespace GChan.Models.Trackers
             }
 
             return new(this, removeFromQueue: false);
+        }
+
+        /// <summary>
+        /// May return null if threads have not been modified since last scrape.
+        /// </summary>
+        protected abstract Task<Thread[]?> GetThreadsImpl(CancellationToken cancellationToken);
+
+        public override string ToString()
+        {
+            return $"{SiteDisplayName} - /{BoardCode}/ - ({ThreadCount} Threads)";
         }
 
         public ValueTask DisposeAsync()
