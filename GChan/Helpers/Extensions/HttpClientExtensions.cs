@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Data;
 using System.IO;
 using System.Net;
 using System.Net.Http;
@@ -33,7 +32,7 @@ namespace GChan.Helpers.Extensions
                 throw new StatusCodeException(response.StatusCode);
             }
 
-            return await response.Content.ReadAsByteArrayAsync();
+            return await response.Content.ReadAsByteArrayAsync(cancellationToken);
         }
 
         /// <exception cref="ArgumentNullException"/>
@@ -48,8 +47,7 @@ namespace GChan.Helpers.Extensions
                 throw new StatusCodeException(response.StatusCode);
             }
 
-            // TODO: Use CancellationToken variant (.NET 5 onwards)
-            return await response.Content.ReadAsStringAsync();
+            return await response.Content.ReadAsStringAsync(cancellationToken);
         }
 
         /// <returns><c>null</c> if <see cref="HttpResponseMessage.StatusCode"/> is <see cref="HttpStatusCode.NotModified"/>.</returns>
@@ -85,8 +83,7 @@ namespace GChan.Helpers.Extensions
                 throw new StatusCodeException(response.StatusCode);
             }
 
-            // TODO: Use CancellationToken variant (.NET 5 onwards)
-            return await response.Content.ReadAsStringAsync();
+            return await response.Content.ReadAsStringAsync(cancellationToken);
         }
 
         /// <summary>
