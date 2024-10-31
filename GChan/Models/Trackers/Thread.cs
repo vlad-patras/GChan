@@ -15,7 +15,6 @@ namespace GChan.Models.Trackers
     /// <see cref="IDownloadable{T}"/> implementation is for downloading the website HTML.<br/>
     /// For downloading images <see cref="ScrapeUploadedAssets"/> is used and results queued into a download manager.
     /// </summary>
-    // TODO: Threads should save their last scrape time and use the If-Modified-Since header in requests https://github.com/4chan/4chan-API#:~:text=Use%20If%2DModified%2DSince%20when%20doing%20your%20requests.
     public abstract class Thread : Tracker, IProcessable, INotifyPropertyChanged
     {
         public const string NO_SUBJECT = "No Subject";
@@ -104,6 +103,8 @@ namespace GChan.Models.Trackers
                     cancellationToken
                 );
 
+                LastScrape = DateTimeOffset.Now;
+
                 if (results == null)
                 {
                     return new(this, removeFromQueue: false);
@@ -120,7 +121,6 @@ namespace GChan.Models.Trackers
                 var newAssets = assets.Where(a => !SeenAssetIds.Contains(a.Id)).ToArray();
 
                 FileCount = results.Uploads.Length;
-                LastScrape = DateTimeOffset.Now;
                 SeenAssetIds.AddRange(newAssets);
 
                 return new(this, removeFromQueue: false, newProcessables: newAssets);
