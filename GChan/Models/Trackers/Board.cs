@@ -53,7 +53,7 @@ namespace GChan.Models.Trackers
             Type = Type.Board;
         }
 
-        protected Board(BoardData data) : base($"http://boards.4chan.org/{data.Code}/")
+        protected Board(BoardData data) : base($"https://boards.4chan.org/{data.Code}/")
         {
             this.LastScrape = data.LastScrape;
         }

@@ -27,7 +27,7 @@ namespace GChan.Models.Trackers.Sites
             Site = Site._4chan;
 
             var match = Regex.Match(url, @"boards.(4chan|4channel).org/[a-zA-Z0-9]*?/thread/\d*");
-            Url = "http://" + match.Groups[0].Value;
+            Url = "https://" + match.Groups[0].Value;
 
             var boardCodeMatch = Regex.Match(url, BOARD_CODE_REGEX);
             BoardCode = boardCodeMatch.Groups[0].Value;
@@ -41,7 +41,7 @@ namespace GChan.Models.Trackers.Sites
             FileCount = fileCount;
         }
 
-        public Thread_4Chan(ThreadData data) : base($"http://boards.4chan.org/{data.BoardCode}/thread/{data.Id}/")
+        public Thread_4Chan(ThreadData data) : base($"https://boards.4chan.org/{data.BoardCode}/thread/{data.Id}/")
         {
             this.Site = Site._4chan;
             this.BoardCode = data.BoardCode;
@@ -111,7 +111,7 @@ namespace GChan.Models.Trackers.Sites
         private async Task<JObject?> GetThreadJson(CancellationToken cancellationToken)
         {
             var client = Utils.GetHttpClient();
-            var jsonUrl = $"http://a.4cdn.org/{BoardCode}/thread/{Id}.json";
+            var jsonUrl = $"https://a.4cdn.org/{BoardCode}/thread/{Id}.json";
             var json = await client.GetStringAsync(jsonUrl, LastScrape, cancellationToken);
 
             if (json == null)
@@ -137,7 +137,7 @@ namespace GChan.Models.Trackers.Sites
                     // Only save thumbs for filetypes that need it.
                     if (ext == ".webm") // TODO: Figure out if flash files/pdfs need special handling like webms, and then figure out a better method to check for this condition.
                     {
-                        var thumbUrl = $"http://t.4cdn.org/{BoardCode}/{tim}s.jpg";
+                        var thumbUrl = $"https://t.4cdn.org/{BoardCode}/{tim}s.jpg";
                         //return (thumbUrl, no);
                         return new Thumbnail(this, no, thumbUrl);
                     }
@@ -152,7 +152,7 @@ namespace GChan.Models.Trackers.Sites
 
         private Upload[] ScrapeUploads(JObject jObject)
         {
-            var baseUrl = $"http://i.4cdn.org/{BoardCode}/";
+            var baseUrl = $"https://i.4cdn.org/{BoardCode}/";
             var timPath = BoardCode == "f" ? "filename" : "tim";    // The /f/ board (flash) saves the files with their uploaded name.
 
             var uploads = jObject
@@ -203,10 +203,10 @@ namespace GChan.Models.Trackers.Sites
 
             // 4chan uses urls starting with // (uses current protocol), when the user views it locally the protocol will be file:// which won't work, so we need to place http prefixes in.
             // This allows the locally viewed page to reference the js/css hosted on 4chan, fixing the styling and making it a bit functional.
-            html = html.Replace("=\"//", "=\"http://");
+            html = html.Replace("=\"//", "=\"https://");
 
-            // Alter all content links like "http://is2.4chan.org/tv/123.jpg" to become local like "123.jpg".
-            html = html.Replace($"http://is2.4chan.org/{BoardCode}/", string.Empty);
+            // Alter all content links like "https://is2.4chan.org/tv/123.jpg" to become local like "123.jpg".
+            html = html.Replace($"https://is2.4chan.org/{BoardCode}/", string.Empty);
 
             return html;
         }
@@ -218,7 +218,7 @@ namespace GChan.Models.Trackers.Sites
 
             try
             {
-                string jsonUrl = "http://a.4cdn.org/" + BoardCode + "/thread/" + Id + ".json";
+                string jsonUrl = "https://a.4cdn.org/" + BoardCode + "/thread/" + Id + ".json";
 
                 const string SUB_HEADER = "\"sub\":\"";
                 const string SUB_ENDER = "\",";

@@ -35,7 +35,7 @@ namespace GChan.Models.Trackers.Sites
 
         override protected async Task<Thread[]?> GetThreadsImpl(CancellationToken cancellationToken)
         {
-            var catalogUrl = "http://a.4cdn.org/" + BoardCode + "/catalog.json";
+            var catalogUrl = "https://a.4cdn.org/" + BoardCode + "/catalog.json";
             var client = Utils.GetHttpClient();
             var json = await client.GetStringAsync(catalogUrl, LastScrape, cancellationToken);
 
@@ -51,7 +51,7 @@ namespace GChan.Models.Trackers.Sites
                 .Select(thread =>
                 {
                     var id = thread["no"].Value<long>();
-                    var url = "http://boards.4chan.org/" + BoardCode + "/thread/" + id;
+                    var url = "https://boards.4chan.org/" + BoardCode + "/thread/" + id;
                     var subject = thread["sub"]?.Value<string>() ?? Thread.NO_SUBJECT;
                     var fileCount = thread["images"].Value<int>();
 
