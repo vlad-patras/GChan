@@ -21,6 +21,8 @@ namespace GChan.Models
 
         public bool ShouldProcess => Settings.Default.SaveThumbnails && thread.ShouldProcess;
 
+        public DateTimeOffset? ReadyToProcessAt => null;
+
         /// <summary>
         /// URL to download the thumbnail.
         /// </summary>

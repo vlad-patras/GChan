@@ -37,13 +37,13 @@ namespace GChan.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("60000")]
-        public int ScanTimer {
+        [global::System.Configuration.DefaultSettingValueAttribute("60")]
+        public int MinSecondsBetweenScrapes {
             get {
-                return ((int)(this["ScanTimer"]));
+                return ((int)(this["MinSecondsBetweenScrapes"]));
             }
             set {
-                this["ScanTimer"] = value;
+                this["MinSecondsBetweenScrapes"] = value;
             }
         }
         

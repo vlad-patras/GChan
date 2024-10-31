@@ -68,7 +68,7 @@ namespace GChan
             directory = Settings.Default.SavePath;
             directoryTextBox.Text = directory;
 
-            timerNumeric.Value = (Settings.Default.ScanTimer / 1000);
+            minSecondsBetweenScrapesNumeric.Value = Settings.Default.MinSecondsBetweenScrapes;
             max1RequestPerSecondCheckBox.Checked = Settings.Default.Max1RequestPerSecond;
             concurrentDownloadsNumeric.Value = Settings.Default.MaximumConcurrentDownloads;
 
@@ -96,7 +96,7 @@ namespace GChan
                 return;
             }
 
-            if (timerNumeric.Value < 5)
+            if (minSecondsBetweenScrapesNumeric.Value < 5)
             {
                 MessageBox.Show("Timer must be greater than 5 seconds.");
                 return;
@@ -115,7 +115,7 @@ namespace GChan
         {
             Settings.Default.UserAgent = userAgentTextBox.Text;
             Settings.Default.SavePath = directory;
-            Settings.Default.ScanTimer = (int)timerNumeric.Value * 1000;
+            Settings.Default.MinSecondsBetweenScrapes = (int)minSecondsBetweenScrapesNumeric.Value;
             Settings.Default.Max1RequestPerSecond = max1RequestPerSecondCheckBox.Checked;
             Settings.Default.MaximumConcurrentDownloads = (int)concurrentDownloadsNumeric.Value;
             Settings.Default.ImageFilenameFormat = (byte)imageFilenameFormatComboBox.SelectedIndex;

@@ -48,11 +48,17 @@ namespace GChan.Services
         public CancellationToken CancellationToken { get; }
 
         /// <summary>
-        /// Should this item be downloaded.<br/>
-        /// Decision may have changed since being added to download manager.<br/>
-        /// If this ever goes false it should never go back to being true.
+        /// Should this item be processed<br/>
+        /// Decision may have changed since being added to queue.<br/>
+        /// If this ever goes false it should never go back to being true, thus it should be discarded from the queue.
         /// </summary>
         public bool ShouldProcess { get; }
+
+        /// <summary>
+        /// When will this processable by ready to process.<br/>
+        /// Set to null for any time, otherwise the item is deferred until it is next found in the queue with a ready time.
+        /// </summary>
+        public DateTimeOffset? ReadyToProcessAt { get; }
 
         /// <summary>
         /// Perform download for this item.<br/>

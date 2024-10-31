@@ -5,8 +5,8 @@
     <Setting Name="SavePath" Type="System.String" Scope="User">
       <Value Profile="(Default)">C:\GChan</Value>
     </Setting>
-    <Setting Name="ScanTimer" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">60000</Value>
+    <Setting Name="MinSecondsBetweenScrapes" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">60</Value>
     </Setting>
     <Setting Name="SaveHtml" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>

@@ -36,16 +36,20 @@
             chkWarn = new System.Windows.Forms.CheckBox();
             setPathButton = new System.Windows.Forms.Button();
             chkStartWithWindows = new System.Windows.Forms.CheckBox();
-            timerNumeric = new System.Windows.Forms.NumericUpDown();
+            minSecondsBetweenScrapesNumeric = new System.Windows.Forms.NumericUpDown();
             directoryTextBox = new System.Windows.Forms.TextBox();
             tooltip = new System.Windows.Forms.ToolTip(components);
-            renameThreadFolderCheckBox = new System.Windows.Forms.CheckBox();
             concurrentDownloadsLabel = new System.Windows.Forms.Label();
             chkSaveThumbnails = new System.Windows.Forms.CheckBox();
             userAgentLabel = new System.Windows.Forms.Label();
-            max1RequestPerSecondCheckBox = new System.Windows.Forms.CheckBox();
             headerRateLimiting = new System.Windows.Forms.Label();
             label3 = new System.Windows.Forms.Label();
+            label5 = new System.Windows.Forms.Label();
+            label8 = new System.Windows.Forms.Label();
+            label11 = new System.Windows.Forms.Label();
+            label16 = new System.Windows.Forms.Label();
+            renameThreadFolderCheckBox = new System.Windows.Forms.CheckBox();
+            max1RequestPerSecondCheckBox = new System.Windows.Forms.CheckBox();
             imageFilenameFormatLabel = new System.Windows.Forms.Label();
             imageFilenameFormatComboBox = new System.Windows.Forms.ComboBox();
             threadFolderNameFormatLabel = new System.Windows.Forms.Label();
@@ -54,19 +58,15 @@
             concurrentDownloadsNumeric = new System.Windows.Forms.NumericUpDown();
             userAgentTextBox = new System.Windows.Forms.TextBox();
             settingsLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
-            label5 = new System.Windows.Forms.Label();
             label4 = new System.Windows.Forms.Label();
             label6 = new System.Windows.Forms.Label();
             label7 = new System.Windows.Forms.Label();
-            label8 = new System.Windows.Forms.Label();
-            label11 = new System.Windows.Forms.Label();
             label12 = new System.Windows.Forms.Label();
-            label16 = new System.Windows.Forms.Label();
             aboutRateLimitingButton = new System.Windows.Forms.Button();
             tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             label15 = new System.Windows.Forms.Label();
             saveCloseLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
-            ((System.ComponentModel.ISupportInitialize)timerNumeric).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)minSecondsBetweenScrapesNumeric).BeginInit();
             ((System.ComponentModel.ISupportInitialize)concurrentDownloadsNumeric).BeginInit();
             settingsLayoutPanel.SuspendLayout();
             tableLayoutPanel2.SuspendLayout();
@@ -76,7 +76,7 @@
             // buttonSave
             // 
             buttonSave.Dock = System.Windows.Forms.DockStyle.Right;
-            buttonSave.Location = new System.Drawing.Point(143, 3);
+            buttonSave.Location = new System.Drawing.Point(144, 3);
             buttonSave.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             buttonSave.Name = "buttonSave";
             buttonSave.Size = new System.Drawing.Size(130, 29);
@@ -88,7 +88,7 @@
             // buttonCancel
             // 
             buttonCancel.Dock = System.Windows.Forms.DockStyle.Left;
-            buttonCancel.Location = new System.Drawing.Point(281, 3);
+            buttonCancel.Location = new System.Drawing.Point(282, 3);
             buttonCancel.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             buttonCancel.Name = "buttonCancel";
             buttonCancel.Size = new System.Drawing.Size(130, 29);
@@ -119,9 +119,9 @@
             label2.Name = "label2";
             label2.Size = new System.Drawing.Size(192, 32);
             label2.TabIndex = 3;
-            label2.Text = "Timer (seconds)";
+            label2.Text = "Seconds Between Scrapes";
             label2.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            tooltip.SetToolTip(label2, "How often to check threads/boards for updates.");
+            tooltip.SetToolTip(label2, "The minimum amount of time (in seconds) between board and thread scrapes.\r\nE.g. When a thread is scraped, leave it in queue for a minimum of 60 seconds before scraping again.");
             // 
             // chkSaveHtml
             // 
@@ -130,7 +130,7 @@
             chkSaveHtml.Location = new System.Drawing.Point(204, 483);
             chkSaveHtml.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             chkSaveHtml.Name = "chkSaveHtml";
-            chkSaveHtml.Size = new System.Drawing.Size(346, 26);
+            chkSaveHtml.Size = new System.Drawing.Size(348, 26);
             chkSaveHtml.TabIndex = 6;
             chkSaveHtml.UseVisualStyleBackColor = true;
             chkSaveHtml.CheckedChanged += chkHTML_CheckedChanged;
@@ -142,7 +142,7 @@
             chkSave.Location = new System.Drawing.Point(204, 419);
             chkSave.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             chkSave.Name = "chkSave";
-            chkSave.Size = new System.Drawing.Size(346, 26);
+            chkSave.Size = new System.Drawing.Size(348, 26);
             chkSave.TabIndex = 7;
             chkSave.UseVisualStyleBackColor = true;
             // 
@@ -153,7 +153,7 @@
             chkMinimiseToTray.Location = new System.Drawing.Point(204, 451);
             chkMinimiseToTray.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             chkMinimiseToTray.Name = "chkMinimiseToTray";
-            chkMinimiseToTray.Size = new System.Drawing.Size(346, 26);
+            chkMinimiseToTray.Size = new System.Drawing.Size(348, 26);
             chkMinimiseToTray.TabIndex = 8;
             chkMinimiseToTray.UseVisualStyleBackColor = true;
             // 
@@ -164,14 +164,14 @@
             chkWarn.Location = new System.Drawing.Point(204, 387);
             chkWarn.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             chkWarn.Name = "chkWarn";
-            chkWarn.Size = new System.Drawing.Size(346, 26);
+            chkWarn.Size = new System.Drawing.Size(348, 26);
             chkWarn.TabIndex = 9;
             chkWarn.UseVisualStyleBackColor = true;
             // 
             // setPathButton
             // 
             setPathButton.Anchor = System.Windows.Forms.AnchorStyles.None;
-            setPathButton.Location = new System.Drawing.Point(320, 3);
+            setPathButton.Location = new System.Drawing.Point(322, 3);
             setPathButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             setPathButton.Name = "setPathButton";
             setPathButton.Size = new System.Drawing.Size(24, 20);
@@ -187,22 +187,22 @@
             chkStartWithWindows.Location = new System.Drawing.Point(204, 323);
             chkStartWithWindows.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             chkStartWithWindows.Name = "chkStartWithWindows";
-            chkStartWithWindows.Size = new System.Drawing.Size(346, 26);
+            chkStartWithWindows.Size = new System.Drawing.Size(348, 26);
             chkStartWithWindows.TabIndex = 11;
             chkStartWithWindows.UseVisualStyleBackColor = true;
             // 
             // timerNumeric
             // 
-            timerNumeric.Dock = System.Windows.Forms.DockStyle.Fill;
-            timerNumeric.Location = new System.Drawing.Point(204, 67);
-            timerNumeric.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            timerNumeric.Maximum = new decimal(new int[] { -1, -1, -1, 0 });
-            timerNumeric.Minimum = new decimal(new int[] { 5, 0, 0, 0 });
-            timerNumeric.Name = "timerNumeric";
-            timerNumeric.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            timerNumeric.Size = new System.Drawing.Size(346, 23);
-            timerNumeric.TabIndex = 12;
-            timerNumeric.Value = new decimal(new int[] { 5, 0, 0, 0 });
+            minSecondsBetweenScrapesNumeric.Dock = System.Windows.Forms.DockStyle.Fill;
+            minSecondsBetweenScrapesNumeric.Location = new System.Drawing.Point(204, 67);
+            minSecondsBetweenScrapesNumeric.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            minSecondsBetweenScrapesNumeric.Maximum = new decimal(new int[] { -1, -1, -1, 0 });
+            minSecondsBetweenScrapesNumeric.Minimum = new decimal(new int[] { 5, 0, 0, 0 });
+            minSecondsBetweenScrapesNumeric.Name = "timerNumeric";
+            minSecondsBetweenScrapesNumeric.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            minSecondsBetweenScrapesNumeric.Size = new System.Drawing.Size(348, 23);
+            minSecondsBetweenScrapesNumeric.TabIndex = 12;
+            minSecondsBetweenScrapesNumeric.Value = new decimal(new int[] { 5, 0, 0, 0 });
             // 
             // directoryTextBox
             // 
@@ -211,22 +211,10 @@
             directoryTextBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             directoryTextBox.Name = "directoryTextBox";
             directoryTextBox.ReadOnly = true;
-            directoryTextBox.Size = new System.Drawing.Size(308, 23);
+            directoryTextBox.Size = new System.Drawing.Size(310, 23);
             directoryTextBox.TabIndex = 13;
             tooltip.SetToolTip(directoryTextBox, "The directory that GChan will save files in. Double click to open or go File->Open Folder in GChan's main window.");
             directoryTextBox.DoubleClick += textBox1_DoubleClick;
-            // 
-            // renameThreadFolderCheckBox
-            // 
-            renameThreadFolderCheckBox.AutoSize = true;
-            renameThreadFolderCheckBox.Dock = System.Windows.Forms.DockStyle.Fill;
-            renameThreadFolderCheckBox.Location = new System.Drawing.Point(204, 259);
-            renameThreadFolderCheckBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            renameThreadFolderCheckBox.Name = "renameThreadFolderCheckBox";
-            renameThreadFolderCheckBox.Size = new System.Drawing.Size(346, 26);
-            renameThreadFolderCheckBox.TabIndex = 14;
-            renameThreadFolderCheckBox.UseVisualStyleBackColor = true;
-            renameThreadFolderCheckBox.CheckedChanged += renameThreadFolderCheckBox_CheckedChanged;
             // 
             // concurrentDownloadsLabel
             // 
@@ -237,7 +225,7 @@
             concurrentDownloadsLabel.Name = "concurrentDownloadsLabel";
             concurrentDownloadsLabel.Size = new System.Drawing.Size(192, 32);
             concurrentDownloadsLabel.TabIndex = 22;
-            concurrentDownloadsLabel.Text = "Concurrent Downloads";
+            concurrentDownloadsLabel.Text = "Max Concurrent Downloads";
             concurrentDownloadsLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             tooltip.SetToolTip(concurrentDownloadsLabel, "The maximum amount of files allowed to be downloading at once.\r\nA high amount can effect your network (e.g. gaming latency).");
             // 
@@ -248,7 +236,7 @@
             chkSaveThumbnails.Location = new System.Drawing.Point(204, 355);
             chkSaveThumbnails.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             chkSaveThumbnails.Name = "chkSaveThumbnails";
-            chkSaveThumbnails.Size = new System.Drawing.Size(346, 26);
+            chkSaveThumbnails.Size = new System.Drawing.Size(348, 26);
             chkSaveThumbnails.TabIndex = 24;
             tooltip.SetToolTip(chkSaveThumbnails, "When downloading thread HTML, also save thumbnails for images and place in \"thumb\" folder.");
             chkSaveThumbnails.UseVisualStyleBackColor = true;
@@ -265,17 +253,6 @@
             userAgentLabel.Text = "User-Agent Header";
             userAgentLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             tooltip.SetToolTip(userAgentLabel, resources.GetString("userAgentLabel.ToolTip"));
-            // 
-            // max1RequestPerSecondCheckBox
-            // 
-            max1RequestPerSecondCheckBox.AutoSize = true;
-            max1RequestPerSecondCheckBox.Dock = System.Windows.Forms.DockStyle.Fill;
-            max1RequestPerSecondCheckBox.Location = new System.Drawing.Point(204, 99);
-            max1RequestPerSecondCheckBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            max1RequestPerSecondCheckBox.Name = "max1RequestPerSecondCheckBox";
-            max1RequestPerSecondCheckBox.Size = new System.Drawing.Size(346, 26);
-            max1RequestPerSecondCheckBox.TabIndex = 27;
-            max1RequestPerSecondCheckBox.UseVisualStyleBackColor = true;
             // 
             // headerRateLimiting
             // 
@@ -302,6 +279,78 @@
             label3.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             tooltip.SetToolTip(label3, "Allow a maximum of 1 request per second to 4chan, this is highly recommended to avoid getting rate limited or banned.");
             // 
+            // label5
+            // 
+            label5.AutoSize = true;
+            label5.Dock = System.Windows.Forms.DockStyle.Fill;
+            label5.Location = new System.Drawing.Point(4, 320);
+            label5.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            label5.Name = "label5";
+            label5.Size = new System.Drawing.Size(192, 32);
+            label5.TabIndex = 31;
+            label5.Text = "Start GChan with Windows";
+            label5.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            tooltip.SetToolTip(label5, "Will start in system tray if \"Minimize to Tray\" setting is enabled.");
+            // 
+            // label8
+            // 
+            label8.AutoSize = true;
+            label8.Dock = System.Windows.Forms.DockStyle.Fill;
+            label8.Location = new System.Drawing.Point(3, 416);
+            label8.Name = "label8";
+            label8.Size = new System.Drawing.Size(194, 32);
+            label8.TabIndex = 34;
+            label8.Text = "Save URLs on exit";
+            label8.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            tooltip.SetToolTip(label8, "Save ");
+            // 
+            // label11
+            // 
+            label11.AutoSize = true;
+            label11.Dock = System.Windows.Forms.DockStyle.Fill;
+            label11.Location = new System.Drawing.Point(3, 448);
+            label11.Name = "label11";
+            label11.Size = new System.Drawing.Size(194, 32);
+            label11.TabIndex = 37;
+            label11.Text = "Minimize to Tray";
+            label11.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            tooltip.SetToolTip(label11, "When minimised, GChan will be hidden from taskbar and appear in the system tray (bottom right).\r\nAllowing you to declutter your desktop while it scrapes in the background.");
+            // 
+            // label16
+            // 
+            label16.AutoSize = true;
+            label16.Dock = System.Windows.Forms.DockStyle.Fill;
+            label16.Location = new System.Drawing.Point(3, 256);
+            label16.Name = "label16";
+            label16.Size = new System.Drawing.Size(194, 32);
+            label16.TabIndex = 42;
+            label16.Text = "Rename thread folder on removal";
+            label16.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            tooltip.SetToolTip(label16, "When a thread is automatically or manually removed from GChan's tracking list, if this option ");
+            // 
+            // renameThreadFolderCheckBox
+            // 
+            renameThreadFolderCheckBox.AutoSize = true;
+            renameThreadFolderCheckBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            renameThreadFolderCheckBox.Location = new System.Drawing.Point(204, 259);
+            renameThreadFolderCheckBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            renameThreadFolderCheckBox.Name = "renameThreadFolderCheckBox";
+            renameThreadFolderCheckBox.Size = new System.Drawing.Size(348, 26);
+            renameThreadFolderCheckBox.TabIndex = 14;
+            renameThreadFolderCheckBox.UseVisualStyleBackColor = true;
+            renameThreadFolderCheckBox.CheckedChanged += renameThreadFolderCheckBox_CheckedChanged;
+            // 
+            // max1RequestPerSecondCheckBox
+            // 
+            max1RequestPerSecondCheckBox.AutoSize = true;
+            max1RequestPerSecondCheckBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            max1RequestPerSecondCheckBox.Location = new System.Drawing.Point(204, 99);
+            max1RequestPerSecondCheckBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            max1RequestPerSecondCheckBox.Name = "max1RequestPerSecondCheckBox";
+            max1RequestPerSecondCheckBox.Size = new System.Drawing.Size(348, 26);
+            max1RequestPerSecondCheckBox.TabIndex = 27;
+            max1RequestPerSecondCheckBox.UseVisualStyleBackColor = true;
+            // 
             // imageFilenameFormatLabel
             // 
             imageFilenameFormatLabel.AutoSize = true;
@@ -323,7 +372,7 @@
             imageFilenameFormatComboBox.Location = new System.Drawing.Point(204, 227);
             imageFilenameFormatComboBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             imageFilenameFormatComboBox.Name = "imageFilenameFormatComboBox";
-            imageFilenameFormatComboBox.Size = new System.Drawing.Size(346, 23);
+            imageFilenameFormatComboBox.Size = new System.Drawing.Size(348, 23);
             imageFilenameFormatComboBox.TabIndex = 16;
             imageFilenameFormatComboBox.ValueMember = "EnumValue";
             // 
@@ -348,7 +397,7 @@
             threadFolderNameFormatComboBox.Location = new System.Drawing.Point(204, 291);
             threadFolderNameFormatComboBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             threadFolderNameFormatComboBox.Name = "threadFolderNameFormatComboBox";
-            threadFolderNameFormatComboBox.Size = new System.Drawing.Size(346, 23);
+            threadFolderNameFormatComboBox.Size = new System.Drawing.Size(348, 23);
             threadFolderNameFormatComboBox.TabIndex = 19;
             threadFolderNameFormatComboBox.ValueMember = "EnumValue";
             // 
@@ -359,7 +408,7 @@
             checkForUpdatesOnStartCheckBox.Location = new System.Drawing.Point(204, 515);
             checkForUpdatesOnStartCheckBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             checkForUpdatesOnStartCheckBox.Name = "checkForUpdatesOnStartCheckBox";
-            checkForUpdatesOnStartCheckBox.Size = new System.Drawing.Size(346, 27);
+            checkForUpdatesOnStartCheckBox.Size = new System.Drawing.Size(348, 27);
             checkForUpdatesOnStartCheckBox.TabIndex = 21;
             checkForUpdatesOnStartCheckBox.UseVisualStyleBackColor = true;
             // 
@@ -371,7 +420,7 @@
             concurrentDownloadsNumeric.Maximum = new decimal(new int[] { 1000, 0, 0, 0 });
             concurrentDownloadsNumeric.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
             concurrentDownloadsNumeric.Name = "concurrentDownloadsNumeric";
-            concurrentDownloadsNumeric.Size = new System.Drawing.Size(346, 23);
+            concurrentDownloadsNumeric.Size = new System.Drawing.Size(348, 23);
             concurrentDownloadsNumeric.TabIndex = 23;
             concurrentDownloadsNumeric.Value = new decimal(new int[] { 1, 0, 0, 0 });
             // 
@@ -381,7 +430,7 @@
             userAgentTextBox.Location = new System.Drawing.Point(204, 35);
             userAgentTextBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             userAgentTextBox.Name = "userAgentTextBox";
-            userAgentTextBox.Size = new System.Drawing.Size(346, 23);
+            userAgentTextBox.Size = new System.Drawing.Size(348, 23);
             userAgentTextBox.TabIndex = 26;
             // 
             // settingsLayoutPanel
@@ -403,7 +452,7 @@
             settingsLayoutPanel.Controls.Add(chkSave, 1, 13);
             settingsLayoutPanel.Controls.Add(threadFolderNameFormatLabel, 0, 9);
             settingsLayoutPanel.Controls.Add(label2, 0, 2);
-            settingsLayoutPanel.Controls.Add(timerNumeric, 1, 2);
+            settingsLayoutPanel.Controls.Add(minSecondsBetweenScrapesNumeric, 1, 2);
             settingsLayoutPanel.Controls.Add(renameThreadFolderCheckBox, 1, 8);
             settingsLayoutPanel.Controls.Add(imageFilenameFormatComboBox, 1, 7);
             settingsLayoutPanel.Controls.Add(label3, 0, 3);
@@ -448,21 +497,8 @@
             settingsLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 32F));
             settingsLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 32F));
             settingsLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 32F));
-            settingsLayoutPanel.Size = new System.Drawing.Size(554, 545);
+            settingsLayoutPanel.Size = new System.Drawing.Size(556, 545);
             settingsLayoutPanel.TabIndex = 29;
-            // 
-            // label5
-            // 
-            label5.AutoSize = true;
-            label5.Dock = System.Windows.Forms.DockStyle.Fill;
-            label5.Location = new System.Drawing.Point(4, 320);
-            label5.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            label5.Name = "label5";
-            label5.Size = new System.Drawing.Size(192, 32);
-            label5.TabIndex = 31;
-            label5.Text = "Start GChan with Windows";
-            label5.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            tooltip.SetToolTip(label5, "Will start in system tray if \"Minimize to Tray\" setting is enabled.");
             // 
             // label4
             // 
@@ -498,30 +534,6 @@
             label7.Text = "Show Exit Warning";
             label7.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
-            // label8
-            // 
-            label8.AutoSize = true;
-            label8.Dock = System.Windows.Forms.DockStyle.Fill;
-            label8.Location = new System.Drawing.Point(3, 416);
-            label8.Name = "label8";
-            label8.Size = new System.Drawing.Size(194, 32);
-            label8.TabIndex = 34;
-            label8.Text = "Save URLs on exit";
-            label8.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            tooltip.SetToolTip(label8, "Save ");
-            // 
-            // label11
-            // 
-            label11.AutoSize = true;
-            label11.Dock = System.Windows.Forms.DockStyle.Fill;
-            label11.Location = new System.Drawing.Point(3, 448);
-            label11.Name = "label11";
-            label11.Size = new System.Drawing.Size(194, 32);
-            label11.TabIndex = 37;
-            label11.Text = "Minimize to Tray";
-            label11.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            tooltip.SetToolTip(label11, "When minimised, GChan will be hidden from taskbar and appear in the system tray (bottom right).\r\nAllowing you to declutter your desktop while it scrapes in the background.");
-            // 
             // label12
             // 
             label12.AutoSize = true;
@@ -533,22 +545,10 @@
             label12.Text = "Download Thread HTML";
             label12.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
-            // label16
-            // 
-            label16.AutoSize = true;
-            label16.Dock = System.Windows.Forms.DockStyle.Fill;
-            label16.Location = new System.Drawing.Point(3, 256);
-            label16.Name = "label16";
-            label16.Size = new System.Drawing.Size(194, 32);
-            label16.TabIndex = 42;
-            label16.Text = "Rename thread folder on removal";
-            label16.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            tooltip.SetToolTip(label16, "When a thread is automatically or manually removed from GChan's tracking list, if this option ");
-            // 
             // aboutRateLimitingButton
             // 
             aboutRateLimitingButton.Dock = System.Windows.Forms.DockStyle.Right;
-            aboutRateLimitingButton.Location = new System.Drawing.Point(428, 3);
+            aboutRateLimitingButton.Location = new System.Drawing.Point(430, 3);
             aboutRateLimitingButton.Name = "aboutRateLimitingButton";
             aboutRateLimitingButton.Size = new System.Drawing.Size(123, 26);
             aboutRateLimitingButton.TabIndex = 43;
@@ -568,7 +568,7 @@
             tableLayoutPanel2.Name = "tableLayoutPanel2";
             tableLayoutPanel2.RowCount = 1;
             tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            tableLayoutPanel2.Size = new System.Drawing.Size(348, 26);
+            tableLayoutPanel2.Size = new System.Drawing.Size(350, 26);
             tableLayoutPanel2.TabIndex = 44;
             // 
             // label15
@@ -590,11 +590,11 @@
             saveCloseLayoutPanel.Controls.Add(buttonSave, 0, 0);
             saveCloseLayoutPanel.Controls.Add(buttonCancel, 1, 0);
             saveCloseLayoutPanel.Dock = System.Windows.Forms.DockStyle.Bottom;
-            saveCloseLayoutPanel.Location = new System.Drawing.Point(0, 559);
+            saveCloseLayoutPanel.Location = new System.Drawing.Point(0, 556);
             saveCloseLayoutPanel.Name = "saveCloseLayoutPanel";
             saveCloseLayoutPanel.RowCount = 1;
             saveCloseLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            saveCloseLayoutPanel.Size = new System.Drawing.Size(554, 35);
+            saveCloseLayoutPanel.Size = new System.Drawing.Size(556, 35);
             saveCloseLayoutPanel.TabIndex = 30;
             // 
             // SettingsForm
@@ -603,7 +603,7 @@
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            ClientSize = new System.Drawing.Size(554, 594);
+            ClientSize = new System.Drawing.Size(556, 591);
             ControlBox = false;
             Controls.Add(saveCloseLayoutPanel);
             Controls.Add(settingsLayoutPanel);
@@ -617,7 +617,7 @@
             StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             Text = "Settings";
             Shown += Settings_Shown;
-            ((System.ComponentModel.ISupportInitialize)timerNumeric).EndInit();
+            ((System.ComponentModel.ISupportInitialize)minSecondsBetweenScrapesNumeric).EndInit();
             ((System.ComponentModel.ISupportInitialize)concurrentDownloadsNumeric).EndInit();
             settingsLayoutPanel.ResumeLayout(false);
             settingsLayoutPanel.PerformLayout();
@@ -639,7 +639,7 @@
         private System.Windows.Forms.CheckBox chkWarn;
         private System.Windows.Forms.Button setPathButton;
         private System.Windows.Forms.CheckBox chkStartWithWindows;
-        private System.Windows.Forms.NumericUpDown timerNumeric;
+        private System.Windows.Forms.NumericUpDown minSecondsBetweenScrapesNumeric;
         private System.Windows.Forms.TextBox directoryTextBox;
         private System.Windows.Forms.ToolTip tooltip;
         private System.Windows.Forms.CheckBox renameThreadFolderCheckBox;

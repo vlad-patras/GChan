@@ -59,6 +59,8 @@ namespace GChan.Models
 
         public bool ShouldProcess => Thread.ShouldProcess;
 
+        public DateTimeOffset? ReadyToProcessAt => null;
+
         public Upload(
             long tim,
             string url,

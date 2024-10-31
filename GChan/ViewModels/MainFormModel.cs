@@ -35,7 +35,7 @@ namespace GChan.ViewModels
         {
             get
             {
-                return $"Scraping {Threads.Count} thread{(Threads.Count != 1 ? "s" : "")} and {Boards.Count} board{(Boards.Count != 1 ? "s" : "")} every {Settings.Default.ScanTimer / 60 / 1000} minute{(Settings.Default.ScanTimer / 60 / 1000 != 1 ? "s" : "")}." +
+                return $"Scraping {Threads.Count} thread{(Threads.Count != 1 ? "s" : "")} and {Boards.Count} board{(Boards.Count != 1 ? "s" : "")} every {Settings.Default.MinSecondsBetweenScrapes / 60 / 1000} minute{(Settings.Default.MinSecondsBetweenScrapes / 60 / 1000 != 1 ? "s" : "")}." +
                     "\nClick to show/hide.";
             }
         }

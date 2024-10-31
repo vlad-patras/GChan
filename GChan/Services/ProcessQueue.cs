@@ -1,10 +1,13 @@
 ﻿using GChan.Models.Trackers;
 using GChan.Properties;
+using NetTopologySuite.Triangulate.QuadEdge;
 using NLog;
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Documents;
 
 #nullable enable
 
@@ -78,22 +81,44 @@ namespace GChan.Services
         /// </summary>
         private IProcessable? MaybeDequeue()
         {
-            while (true)
-            {
-                if (queue.TryDequeue(out var processable))
-                {
-                    if (processable.ShouldProcess)
-                    {
-                        logger.Trace("Dequeued processable {0}.", processable);
-                        return processable;
-                    }
+            var deferredProcessables = new List<IProcessable>();
 
-                    logger.Trace("Discarding dequeued processable {0}.", processable);
-                }
-                else
+            try
+            {
+                while (true)
                 {
-                    logger.Trace("Processable queue empty.");
-                    return null;
+                    if (queue.TryDequeue(out var processable))
+                    {
+                        if (processable.ShouldProcess)
+                        {
+                            if (processable.ReadyToProcessAt == null || processable.ReadyToProcessAt <= DateTimeOffset.Now)
+                            {
+                                logger.Trace("Dequeued processable {0}.", processable);
+                                return processable;
+                            }
+                            else
+                            {
+                                deferredProcessables.Add(processable);
+                                logger.Trace("Deferring processable {0}. Ready to process at {1}.", processable, processable.ReadyToProcessAt);
+                            }
+                        }
+                        else
+                        {
+                            logger.Trace("Discarding dequeued processable {0}.", processable);
+                        }
+                    }
+                    else
+                    {
+                        logger.Trace("Processable queue empty.");
+                        return null;
+                    }
+                }
+            }
+            finally
+            {
+                foreach (var deferredProcessable in deferredProcessables)
+                {
+                    queue.Enqueue(deferredProcessable);
                 }
             }
         }

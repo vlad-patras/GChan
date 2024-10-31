@@ -39,7 +39,7 @@ namespace GChan.Models.Trackers
         /// When this tracker was last succesfully scraped, null if not yet scraped.<br/>
         /// <see cref="DateTimeOffset"/> because that's what HttpClient header property accepts.
         /// </summary>
-        public DateTimeOffset? LastScrape { get; internal set; }
+        public DateTimeOffset? LastScrape { get; protected set; }
 
         /// <summary>
         /// Whether or not to keep scraping this tracker.

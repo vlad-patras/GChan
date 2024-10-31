@@ -33,6 +33,8 @@ namespace GChan.Models.Trackers
 
         public bool ShouldProcess => !Gone && !cancellationTokenSource.IsCancellationRequested;
 
+        public DateTimeOffset? ReadyToProcessAt => LastScrape + TimeSpan.FromSeconds(Settings.Default.MinSecondsBetweenScrapes);
+
         public string Subject
         {
             get => subject ?? NO_SUBJECT;

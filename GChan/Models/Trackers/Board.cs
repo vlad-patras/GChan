@@ -1,4 +1,5 @@
 ﻿using GChan.Data.Models;
+using GChan.Properties;
 using GChan.Services;
 using System;
 using System.Linq;
@@ -47,6 +48,8 @@ namespace GChan.Models.Trackers
         public long GreatestThreadId { get; set; }
 
         public bool ShouldProcess => !cancellationTokenSource.IsCancellationRequested;
+
+        public DateTimeOffset? ReadyToProcessAt => LastScrape + TimeSpan.FromSeconds(Settings.Default.MinSecondsBetweenScrapes);
 
         protected Board(string url) : base(url)
         {
