@@ -221,10 +221,10 @@ namespace GChan.Forms
             dataGridViewCellStyle1.BackColor = System.Drawing.Color.FromArgb(245, 245, 245);
             dataGridViewCellStyle1.NullValue = " ";
             threadGridView.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
-            threadGridView.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
             threadGridView.AutoGenerateColumns = false;
             threadGridView.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             threadGridView.BackgroundColor = System.Drawing.Color.White;
+            threadGridView.BorderStyle = System.Windows.Forms.BorderStyle.None;
             threadGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             threadGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] { threadGridSubjectColumn, threadGridSiteColumn, threadGridBoardCodeColumn, threadGridFileCountColumn });
             threadGridView.ContextMenuStrip = threadsContextMenu;
@@ -238,8 +238,9 @@ namespace GChan.Forms
             dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
             dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
             threadGridView.DefaultCellStyle = dataGridViewCellStyle2;
+            threadGridView.Dock = System.Windows.Forms.DockStyle.Fill;
             threadGridView.GridColor = System.Drawing.SystemColors.Window;
-            threadGridView.Location = new System.Drawing.Point(-1, -1);
+            threadGridView.Location = new System.Drawing.Point(4, 3);
             threadGridView.Margin = new System.Windows.Forms.Padding(0);
             threadGridView.MultiSelect = false;
             threadGridView.Name = "threadGridView";
@@ -250,7 +251,7 @@ namespace GChan.Forms
             threadGridView.ShowCellErrors = false;
             threadGridView.ShowEditingIcon = false;
             threadGridView.ShowRowErrors = false;
-            threadGridView.Size = new System.Drawing.Size(644, 228);
+            threadGridView.Size = new System.Drawing.Size(635, 222);
             threadGridView.TabIndex = 1;
             threadGridView.DataError += threadGridView_DataError;
             threadGridView.MouseDown += threadGridView_MouseDown;
