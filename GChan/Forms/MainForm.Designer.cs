@@ -41,6 +41,10 @@ namespace GChan.Forms
             changelogToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             aboutToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             checkForUpdatesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            donateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            kofiToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            payPalToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            gitHubSponsorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             updateAvailableToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             listsTabControl = new System.Windows.Forms.TabControl();
             threadsTabPage = new System.Windows.Forms.TabPage();
@@ -144,7 +148,7 @@ namespace GChan.Forms
             // 
             // helpToolStripMenuItem
             // 
-            helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { changelogToolStripMenuItem1, aboutToolStripMenuItem1, checkForUpdatesToolStripMenuItem });
+            helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { changelogToolStripMenuItem1, aboutToolStripMenuItem1, checkForUpdatesToolStripMenuItem, donateToolStripMenuItem });
             helpToolStripMenuItem.Name = "helpToolStripMenuItem";
             helpToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
             helpToolStripMenuItem.Text = "Help";
@@ -155,7 +159,7 @@ namespace GChan.Forms
             changelogToolStripMenuItem1.Image = Properties.Resources.alert;
             changelogToolStripMenuItem1.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             changelogToolStripMenuItem1.Name = "changelogToolStripMenuItem1";
-            changelogToolStripMenuItem1.Size = new System.Drawing.Size(171, 22);
+            changelogToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
             changelogToolStripMenuItem1.Text = "&Changelog";
             changelogToolStripMenuItem1.Click += changelogToolStripMenuItem_Click;
             // 
@@ -164,7 +168,7 @@ namespace GChan.Forms
             aboutToolStripMenuItem1.Image = Properties.Resources.question;
             aboutToolStripMenuItem1.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             aboutToolStripMenuItem1.Name = "aboutToolStripMenuItem1";
-            aboutToolStripMenuItem1.Size = new System.Drawing.Size(171, 22);
+            aboutToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
             aboutToolStripMenuItem1.Text = "&About";
             aboutToolStripMenuItem1.Click += aboutToolStripMenuItem_Click;
             // 
@@ -173,9 +177,37 @@ namespace GChan.Forms
             checkForUpdatesToolStripMenuItem.Image = Properties.Resources.download;
             checkForUpdatesToolStripMenuItem.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             checkForUpdatesToolStripMenuItem.Name = "checkForUpdatesToolStripMenuItem";
-            checkForUpdatesToolStripMenuItem.Size = new System.Drawing.Size(171, 22);
+            checkForUpdatesToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             checkForUpdatesToolStripMenuItem.Text = "Check for Updates";
             checkForUpdatesToolStripMenuItem.Click += checkForUpdatesToolStripMenuItem_Click;
+            // 
+            // donateToolStripMenuItem
+            // 
+            donateToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { kofiToolStripMenuItem, payPalToolStripMenuItem, gitHubSponsorToolStripMenuItem });
+            donateToolStripMenuItem.Name = "donateToolStripMenuItem";
+            donateToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            donateToolStripMenuItem.Text = "Donate";
+            // 
+            // kofiToolStripMenuItem
+            // 
+            kofiToolStripMenuItem.Name = "kofiToolStripMenuItem";
+            kofiToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            kofiToolStripMenuItem.Text = "Ko-fi";
+            kofiToolStripMenuItem.Click += kofiToolStripMenuItem_Click;
+            // 
+            // payPalToolStripMenuItem
+            // 
+            payPalToolStripMenuItem.Name = "payPalToolStripMenuItem";
+            payPalToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            payPalToolStripMenuItem.Text = "PayPal";
+            payPalToolStripMenuItem.Click += payPalToolStripMenuItem_Click;
+            // 
+            // gitHubSponsorToolStripMenuItem
+            // 
+            gitHubSponsorToolStripMenuItem.Name = "gitHubSponsorToolStripMenuItem";
+            gitHubSponsorToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            gitHubSponsorToolStripMenuItem.Text = "GitHub Sponsor";
+            gitHubSponsorToolStripMenuItem.Click += gitHubSponsorToolStripMenuItem_Click;
             // 
             // updateAvailableToolStripMenuItem
             // 
@@ -585,6 +617,10 @@ namespace GChan.Forms
         private System.Windows.Forms.DataGridViewTextBoxColumn threadGridBoardCodeColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn threadGridIdColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn threadGridFileCountColumn;
+        private System.Windows.Forms.ToolStripMenuItem donateToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem kofiToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem payPalToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem gitHubSponsorToolStripMenuItem;
     }
 }
 

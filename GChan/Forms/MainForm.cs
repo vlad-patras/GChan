@@ -25,7 +25,7 @@ namespace GChan.Forms
         /// </summary>
         private int ThreadGridViewSelectedRowIndex => threadGridView?.CurrentCell?.RowIndex ?? -1;
 
-        private int BoardsListBoxSelectedRowIndex { get { return boardsListBox.SelectedIndex; } set {boardsListBox.SelectedIndex = value;} }
+        private int BoardsListBoxSelectedRowIndex { get { return boardsListBox.SelectedIndex; } set { boardsListBox.SelectedIndex = value; } }
 
         private static readonly ILogger logger = LogManager.GetCurrentClassLogger();
 
@@ -80,7 +80,7 @@ namespace GChan.Forms
 
         private void addButton_Click(object sender, EventArgs e)
         {
-            var text = urlTextBox.Text; 
+            var text = urlTextBox.Text;
             urlTextBox.Text = string.Empty;   // Clear textbox.
 
             if (string.IsNullOrWhiteSpace(text) && Clipboard.ContainsText())
@@ -138,7 +138,7 @@ namespace GChan.Forms
                 var path = Model.Threads[ThreadGridViewSelectedRowIndex].SaveTo;
 
                 if (!Directory.Exists(path))
-                { 
+                {
                     Directory.CreateDirectory(path);
                 }
 
@@ -234,7 +234,7 @@ namespace GChan.Forms
         private async void clearAllButton_Click(object sender, EventArgs e)
         {
             if (listsTabControl.SelectedIndex > 1)
-            { 
+            {
                 return;
             }
 
@@ -387,6 +387,21 @@ namespace GChan.Forms
         private void threadGridView_DataError(object sender, DataGridViewDataErrorEventArgs e)
         {
             logger.Error(e.Exception, $"A data error occured on the threadGridView. RowIndex: {e.RowIndex}, ColumnIndex: {e.ColumnIndex}, Context: {e.Context}.");
+        }
+
+        private void kofiToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Utils.OpenWebpage("https://ko-fi.com/issung");
+        }
+
+        private void payPalToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Utils.OpenWebpage("https://www.paypal.com/paypalme/Issung");
+        }
+
+        private void gitHubSponsorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Utils.OpenWebpage("https://github.com/sponsors/Issung");
         }
     }
 }

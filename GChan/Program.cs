@@ -60,6 +60,10 @@ namespace GChan
             Directory.CreateDirectory(LOGS_PATH);
             LogManager.Configuration.Variables["logsDirectory"] = LOGS_PATH;
 
+#if DEBUG
+            SetLogLevelsToTrace();
+#endif
+
             if (Settings.Default.UpdateSettings)
             {
                 Settings.Default.Upgrade();
@@ -105,6 +109,18 @@ namespace GChan
                     new IntPtr(0xEFEF)
                 );
             }
+        }
+
+        private static void SetLogLevelsToTrace()
+        {
+            var config = LogManager.Configuration;
+
+            foreach (var rule in config.LoggingRules)
+            {
+                rule.SetLoggingLevels(LogLevel.Trace, LogLevel.Fatal);
+            }
+
+            LogManager.Configuration = config;
         }
 
         /// <summary>
