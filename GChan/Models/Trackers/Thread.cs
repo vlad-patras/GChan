@@ -5,6 +5,7 @@ using System;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using CancellationToken = System.Threading.CancellationToken;
@@ -132,7 +133,7 @@ namespace GChan.Models.Trackers
                 logger.Debug("Cancelling download for {thread}.", this);
                 return new(this, removeFromQueue: true);
             }
-            catch (StatusCodeException e) when (e.IsGone())
+            catch (HttpRequestException e) when (e.IsGone())
             {
                 Gone = true;
                 return new(this, removeFromQueue: true);

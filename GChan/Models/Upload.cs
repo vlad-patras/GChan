@@ -4,6 +4,7 @@ using GChan.Services;
 using NLog;
 using System;
 using System.IO;
+using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Thread = GChan.Models.Trackers.Thread;
@@ -98,12 +99,12 @@ namespace GChan.Models
             }
             catch (OperationCanceledException)
             {
-                logger.Debug("Cancelling download for {image_link}.", this);
+                logger.Debug("Cancelling download for {upload}.", this);
                 return new(this, removeFromQueue: true);
             }
-            catch (StatusCodeException e) when (e.IsGone())
+            catch (HttpRequestException e) when (e.IsGone())
             {
-                logger.Debug("Downloading {image_link} resulted in {status_code}", this, e.StatusCode);
+                logger.Debug("Downloading {upload} resulted in {status_code}", this, e.StatusCode);
                 return new(this, removeFromQueue: true);  // Thread is gone, don't retry.
             }
             catch (Exception ex)

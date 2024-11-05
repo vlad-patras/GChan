@@ -8,52 +8,11 @@ using System.Threading.Tasks;
 
 namespace GChan.Helpers.Extensions
 {
-    public class StatusCodeException : Exception
-    {
-        public HttpStatusCode StatusCode { get; }
-
-        public StatusCodeException(HttpStatusCode statusCode) : base($"Unexpected http status code {statusCode}.")
-        {
-            StatusCode = statusCode;
-        }
-    }
-
     public static class HttpClientExtensions
     {
-        /// <exception cref="ArgumentNullException"/>
-        /// <exception cref="HttpRequestException"/>
-        /// <exception cref="StatusCodeException"/>
-        public static async Task<byte[]> GetByteArrayAsync(this HttpClient client, string requestUri, CancellationToken cancellationToken)
-        {
-            var response = await client.GetAsync(requestUri, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
-
-            if (!response.IsSuccessStatusCode)
-            {
-                throw new StatusCodeException(response.StatusCode);
-            }
-
-            return await response.Content.ReadAsByteArrayAsync(cancellationToken);
-        }
-
-        /// <exception cref="ArgumentNullException"/>
-        /// <exception cref="HttpRequestException"/>
-        /// <exception cref="StatusCodeException"/>
-        public static async Task<string> GetStringAsync(this HttpClient client, string requestUri, CancellationToken cancellationToken)
-        {
-            var response = await client.GetAsync(requestUri, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
-
-            if (!response.IsSuccessStatusCode)
-            {
-                throw new StatusCodeException(response.StatusCode);
-            }
-
-            return await response.Content.ReadAsStringAsync(cancellationToken);
-        }
-
         /// <returns><c>null</c> if <see cref="HttpResponseMessage.StatusCode"/> is <see cref="HttpStatusCode.NotModified"/>.</returns>
         /// <exception cref="ArgumentNullException"/>
         /// <exception cref="HttpRequestException"/>
-        /// <exception cref="StatusCodeException"/>
         public static async Task<string> GetStringAsync(
             this HttpClient client,
             string requestUri,
@@ -78,10 +37,7 @@ namespace GChan.Helpers.Extensions
                 return null;
             }
 
-            if (!response.IsSuccessStatusCode)
-            {
-                throw new StatusCodeException(response.StatusCode);
-            }
+            response.EnsureSuccessStatusCode();
 
             return await response.Content.ReadAsStringAsync(cancellationToken);
         }
