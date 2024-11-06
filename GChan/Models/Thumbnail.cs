@@ -24,6 +24,8 @@ namespace GChan.Models
 
         public DateTimeOffset? ReadyToProcessAt => null;
 
+        public ProcessPriority Priority => ProcessPriority.Low;
+
         /// <summary>
         /// URL to download the thumbnail.
         /// </summary>

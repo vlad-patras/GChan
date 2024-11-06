@@ -36,6 +36,8 @@ namespace GChan.Models.Trackers
 
         public DateTimeOffset? ReadyToProcessAt => LastScrape + TimeSpan.FromSeconds(Settings.Default.MinSecondsBetweenScrapes);
 
+        public ProcessPriority Priority => ProcessPriority.Default;
+
         public string Subject
         {
             get => subject ?? NO_SUBJECT;

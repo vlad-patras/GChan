@@ -48,11 +48,15 @@ namespace GChan.Services
         }
     }
 
+    public enum ProcessPriority
+    {
+        Default,
+        Low,
+    }
+
     /// <summary>
     /// An item that can be processed.
     /// </summary>
-    // TODO: New "ReadyToProcess" bool property or "Status" enum, for threads to say they aren't ready to scrape again yet.
-    // The thread can save the last scrape datetime and check that the current datetime is greater than lastscrape + setting.
     public interface IProcessable : IAsyncDisposable
     {
         /// <summary>
@@ -72,6 +76,12 @@ namespace GChan.Services
         /// Set to null for any time, otherwise the item is deferred until it is next found in the queue with a ready time.
         /// </summary>
         public DateTimeOffset? ReadyToProcessAt { get; }
+
+        /// <summary>
+        /// Decides what internal queue this processable is placed upon in <see cref="ProcessQueue"/>.
+        /// Any default priority processables will be processed before low priority processables.
+        /// </summary>
+        public ProcessPriority Priority { get; }
 
         /// <summary>
         /// Perform download for this item.<br/>

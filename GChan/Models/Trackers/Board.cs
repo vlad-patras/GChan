@@ -51,6 +51,8 @@ namespace GChan.Models.Trackers
 
         public DateTimeOffset? ReadyToProcessAt => LastScrape + TimeSpan.FromSeconds(Settings.Default.MinSecondsBetweenScrapes);
 
+        public ProcessPriority Priority => ProcessPriority.Default;
+
         protected Board(string url) : base(url)
         {
             Type = Type.Board;

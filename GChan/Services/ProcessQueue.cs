@@ -3,7 +3,6 @@ using GChan.Models.Trackers;
 using GChan.Properties;
 using NLog;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -20,7 +19,8 @@ namespace GChan.Services
     public class ProcessQueue
     {
         private static readonly ILogger logger = LogManager.GetCurrentClassLogger();
-        private readonly ConcurrentDistinctQueue<IProcessable> queue = new(LockRecursionPolicy.SupportsRecursion);
+        private readonly ConcurrentDistinctQueue<IProcessable> defaultPriorityQueue = new(LockRecursionPolicy.SupportsRecursion);
+        private readonly ConcurrentDistinctQueue<IProcessable> lowPriorityQueue = new(LockRecursionPolicy.SupportsRecursion);
         private readonly TaskPool<ProcessResult> pool;
         private readonly Task task;
 
@@ -44,7 +44,18 @@ namespace GChan.Services
 
         public void Enqueue(IProcessable processable)
         {
-            queue.Enqueue(processable);
+            if (processable.Priority == ProcessPriority.Default)
+            {
+                defaultPriorityQueue.Enqueue(processable);
+            }
+            else if (processable.Priority == ProcessPriority.Low)
+            {
+                lowPriorityQueue.Enqueue(processable);
+            }
+            else
+            {
+                throw new InvalidOperationException($"Unknown process priority {processable.Priority}.");
+            }
         }
 
         public async Task WorkAsync()
@@ -74,6 +85,41 @@ namespace GChan.Services
         /// </summary>
         private IProcessable? MaybeDequeue()
         {
+            var processable = DequeueFrom(defaultPriorityQueue) ?? DequeueFrom(lowPriorityQueue);
+
+            if (processable == null)
+            {
+                logger.Trace("Processable queues contained none or no ready to process items.");
+            }
+
+            return processable;
+        }
+
+        private void HandleResult(ProcessResult result)
+        {
+            if (!result.RemoveFromQueue)
+            {
+                Enqueue(result.Processable);
+
+                logger.Debug("Requeuing processable: {processable}.", result.Processable);
+            }
+            
+            foreach (var newProcessable in result.NewProcessables)
+            {
+                // Board may return new threads as processables.
+                if (newProcessable is Tracker tracker)
+                {
+                    addTrackerCallback(tracker);    // The callback will enqueue the tracker.
+                }
+                else
+                {
+                    Enqueue(newProcessable);
+                }
+            }
+        }
+
+        private static IProcessable? DequeueFrom(ConcurrentDistinctQueue<IProcessable> queue)
+        {
             var deferredProcessables = new List<IProcessable>();
 
             try
@@ -91,8 +137,8 @@ namespace GChan.Services
                             }
                             else
                             {
-                                deferredProcessables.Add(processable);
                                 logger.Trace("Deferring processable {0}. Ready to process at {1}.", processable, processable.ReadyToProcessAt);
+                                deferredProcessables.Add(processable);
                             }
                         }
                         else
@@ -100,11 +146,8 @@ namespace GChan.Services
                             logger.Trace("Discarding dequeued processable {0}.", processable);
                         }
                     }
-                    else
-                    {
-                        logger.Trace("Processable queue empty.");
-                        return null;
-                    }
+
+                    return null;
                 }
             }
             finally
@@ -112,29 +155,6 @@ namespace GChan.Services
                 foreach (var deferredProcessable in deferredProcessables)
                 {
                     queue.Enqueue(deferredProcessable);
-                }
-            }
-        }
-
-        private void HandleResult(ProcessResult result)
-        {
-            if (!result.RemoveFromQueue)
-            {
-                Enqueue(result.Processable);
-
-                logger.Debug("Requeuing processable: {processable}.", result.Processable);
-            }
-
-            foreach (var newProcessable in result.NewProcessables)
-            {
-                // Board may return new threads as processables.
-                if (newProcessable is Tracker tracker)
-                {
-                    addTrackerCallback(tracker);    // The callback will enqueue the tracker.
-                }
-                else
-                {
-                    Enqueue(newProcessable);
                 }
             }
         }

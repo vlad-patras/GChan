@@ -62,6 +62,8 @@ namespace GChan.Models
 
         public DateTimeOffset? ReadyToProcessAt => null;
 
+        public ProcessPriority Priority => ProcessPriority.Default;
+
         public Upload(
             long tim,
             string url,
