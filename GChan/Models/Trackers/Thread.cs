@@ -90,7 +90,7 @@ namespace GChan.Models.Trackers
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        public async Task<ProcessResult> ProcessAsync(CancellationToken cancellationToken)
+        public async Task<ProcessResult> ProcessAsync(ProcessableParams parameters, CancellationToken cancellationToken)
         {
             if (!ShouldProcess)
             {
@@ -136,6 +136,7 @@ namespace GChan.Models.Trackers
             catch (HttpRequestException e) when (e.IsGone())
             {
                 Gone = true;
+                await parameters.Hooks.ThreadRemoveSelf(this);
                 return new(this, removeFromQueue: true);
             }
             catch (Exception ex)

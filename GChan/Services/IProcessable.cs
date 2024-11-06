@@ -1,11 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Thread = GChan.Models.Trackers.Thread;
 
 namespace GChan.Services
 {
+    /// <summary>
+    /// Hooks that processables might need to call for functionality outside of themselves.
+    /// </summary>
+    public interface IProcessableHooks
+    {
+        /// <summary>
+        /// A hook for threads to call to remove themselves from the thread list.
+        /// </summary>
+        Task ThreadRemoveSelf(Thread thread);
+    }
+
+    public record ProcessableParams(IProcessableHooks Hooks);
+
     public class ProcessResult
     {
         /// <summary>
@@ -31,7 +44,7 @@ namespace GChan.Services
         {
             Processable = processable;
             RemoveFromQueue = removeFromQueue;
-            NewProcessables = newProcessables ?? Enumerable.Empty<IProcessable>();
+            NewProcessables = newProcessables ?? [];
         }
     }
 
@@ -64,8 +77,9 @@ namespace GChan.Services
         /// Perform download for this item.<br/>
         /// Must never throw, must always return a <see cref="ProcessResult"/>.
         /// </summary>
-        /// <param name="cancellationToken">The CancellationToken for this <see cref="IProcessable"/> combined with another CancellationToken for program shutdown.</param>
+        /// <param name="parameters"></param>
         // TODO: Make sure the never throw rule is done in all implementations.
-        Task<ProcessResult> ProcessAsync(CancellationToken cancellationToken);
+        /// <param name="cancellationToken">The CancellationToken for this <see cref="IProcessable"/> combined with another CancellationToken for program shutdown.</param>
+        Task<ProcessResult> ProcessAsync(ProcessableParams parameters, CancellationToken cancellationToken);
     }
 }

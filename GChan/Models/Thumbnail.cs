@@ -43,7 +43,7 @@ namespace GChan.Models
             Id = new AssetId(AssetType.Thumbnail, $"{thread.Site}.{thread.Id}.{replyId}");
         }
 
-        public async Task<ProcessResult> ProcessAsync(CancellationToken cancellationToken)
+        public async Task<ProcessResult> ProcessAsync(ProcessableParams parameters, CancellationToken cancellationToken)
         {
             if (!ShouldProcess)
             {

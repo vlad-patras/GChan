@@ -79,7 +79,7 @@ namespace GChan.Models
             Extension = Path.GetExtension(Url);
         }
 
-        public async Task<ProcessResult> ProcessAsync(CancellationToken cancellationToken)
+        public async Task<ProcessResult> ProcessAsync(ProcessableParams parameters, CancellationToken cancellationToken)
         {
             if (!ShouldProcess)
             {

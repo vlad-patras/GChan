@@ -1,13 +1,11 @@
 ﻿using GChan.Models.Trackers;
 using GChan.Properties;
-using NetTopologySuite.Triangulate.QuadEdge;
 using NLog;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows.Documents;
 
 #nullable enable
 
@@ -21,24 +19,27 @@ namespace GChan.Services
     public class ProcessQueue
     {
         private static readonly ILogger logger = LogManager.GetCurrentClassLogger();
-
         private readonly SemaphoreSlim semaphore = new(1, 1);
-        private readonly Action<Tracker> addTrackerCallback;
-        private readonly CancellationToken shutdownCancellationToken;
         private readonly ConcurrentQueue<IProcessable> queue = new();
         private readonly TaskPool<ProcessResult> pool;
         private readonly Task task;
 
+        private readonly Action<Tracker> addTrackerCallback;
+        private readonly CancellationToken shutdownCancellationToken;
+        private readonly ProcessableParams processableParams;
+
         public ProcessQueue(
-            Action<Tracker> addTrackerCallback,
+            IProcessableHooks hooks,
+            Action<Tracker> addTrackerCallback, // TODO: Make this a hook too. But we must be careful if we add a tracker we don't accidentally get it into the 
             CancellationToken shutdownCancellationToken
         )
         {
             this.addTrackerCallback = addTrackerCallback;
             this.shutdownCancellationToken = shutdownCancellationToken;
-            this.pool = new(HandleResult);
+            this.processableParams = new(hooks);
 
-            task = Task.Factory.StartNew(WorkAsync, TaskCreationOptions.LongRunning);
+            this.pool = new(HandleResult);
+            this.task = Task.Factory.StartNew(WorkAsync, TaskCreationOptions.LongRunning);
         }
 
         public void Enqueue(IProcessable processable)
@@ -65,7 +66,7 @@ namespace GChan.Services
 
                     logger.Debug("Adding processable to process pool: {processable}.", item);
                     
-                    pool.Enqueue(async () => await item.ProcessAsync(combinedToken));
+                    pool.Enqueue(async () => await item.ProcessAsync(processableParams, combinedToken));
                 }
 
                 if (max1PerSecond)
@@ -137,6 +138,7 @@ namespace GChan.Services
                 // Board may return new threads as processables.
                 if (newProcessable is Tracker tracker)
                 {
+                    // TODO: Make boards (is that all?) call this manually via hooks.
                     addTrackerCallback(tracker);    // The callback will enqueue the tracker.
                 }
                 else

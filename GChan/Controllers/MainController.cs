@@ -5,7 +5,6 @@ using GChan.Models.Trackers;
 using GChan.Properties;
 using GChan.Services;
 using GChan.ViewModels;
-using NetTopologySuite.Precision;
 using NLog;
 using Onova.Models;
 using System;
@@ -13,7 +12,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -23,7 +21,7 @@ using Type = GChan.Models.Trackers.Type;
 
 namespace GChan.Controllers
 {
-    class MainController
+    public class MainController : IProcessableHooks
     {
         internal readonly MainForm Form;
         internal readonly MainFormModel Model;
@@ -67,7 +65,7 @@ namespace GChan.Controllers
         public MainController(MainForm mainForm)
         {
             // Controller Setup
-            processQueue = new(AddTrackerIfNew, cancellationTokenSource.Token);
+            processQueue = new(this, AddTrackerIfNew, cancellationTokenSource.Token);
 
             // Form Setup
             Form = mainForm;
@@ -281,6 +279,11 @@ namespace GChan.Controllers
         public void SettingsUpdated()
         {
 
+        }
+
+        public async Task ThreadRemoveSelf(Thread thread)
+        {
+            await RemoveThread(thread, manualRemoval: false, saveToDatabase: true);
         }
 
         /// <summary>

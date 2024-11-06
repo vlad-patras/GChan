@@ -61,7 +61,7 @@ namespace GChan.Models.Trackers
             this.LastScrape = data.LastScrape;
         }
 
-        public async Task<ProcessResult> ProcessAsync(CancellationToken cancellationToken)
+        public async Task<ProcessResult> ProcessAsync(ProcessableParams parameters, CancellationToken cancellationToken)
         {
             try
             {
