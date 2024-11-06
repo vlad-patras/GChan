@@ -1,4 +1,5 @@
-﻿using GChan.Models.Trackers;
+﻿using GChan.Models;
+using GChan.Models.Trackers;
 using GChan.Properties;
 using NLog;
 using System;
@@ -19,8 +20,7 @@ namespace GChan.Services
     public class ProcessQueue
     {
         private static readonly ILogger logger = LogManager.GetCurrentClassLogger();
-        private readonly SemaphoreSlim semaphore = new(1, 1);
-        private readonly ConcurrentQueue<IProcessable> queue = new();
+        private readonly ConcurrentDistinctQueue<IProcessable> queue = new(LockRecursionPolicy.SupportsRecursion);
         private readonly TaskPool<ProcessResult> pool;
         private readonly Task task;
 
@@ -30,7 +30,7 @@ namespace GChan.Services
 
         public ProcessQueue(
             IProcessableHooks hooks,
-            Action<Tracker> addTrackerCallback, // TODO: Make this a hook too. But we must be careful if we add a tracker we don't accidentally get it into the 
+            Action<Tracker> addTrackerCallback,
             CancellationToken shutdownCancellationToken
         )
         {
@@ -51,13 +51,6 @@ namespace GChan.Services
         {
             while (!shutdownCancellationToken.IsCancellationRequested)
             {
-                var max1PerSecond = Settings.Default.Max1RequestPerSecond;  // Save setting temporarily incase it changes mid-loop.
-
-                if (max1PerSecond)
-                {
-                    await semaphore.WaitAsync();
-                }
-
                 var item = MaybeDequeue();
 
                 if (item != null)
@@ -69,9 +62,8 @@ namespace GChan.Services
                     pool.Enqueue(async () => await item.ProcessAsync(processableParams, combinedToken));
                 }
 
-                if (max1PerSecond)
+                if (Settings.Default.Max1RequestPerSecond)
                 {
-                    semaphore.Release();
                     await Task.Delay(TimeSpan.FromSeconds(1));
                 }
             }
@@ -138,7 +130,6 @@ namespace GChan.Services
                 // Board may return new threads as processables.
                 if (newProcessable is Tracker tracker)
                 {
-                    // TODO: Make boards (is that all?) call this manually via hooks.
                     addTrackerCallback(tracker);    // The callback will enqueue the tracker.
                 }
                 else
