@@ -123,9 +123,6 @@
   <metadata name="tooltip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>22, 20</value>
   </metadata>
-  <metadata name="tooltip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>22, 20</value>
-  </metadata>
   <data name="userAgentLabel.ToolTip" xml:space="preserve">
     <value>User-Agent headers are sent with every scraping request. The default value should be fine in most cases but if GChan is getting blocked you may wish to change it to the User-Agent header your browser uses. You should only need to mess with this if you know what you are doing.</value>
   </data>

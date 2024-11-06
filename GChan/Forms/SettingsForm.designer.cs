@@ -76,7 +76,7 @@
             // buttonSave
             // 
             buttonSave.Dock = System.Windows.Forms.DockStyle.Right;
-            buttonSave.Location = new System.Drawing.Point(146, 3);
+            buttonSave.Location = new System.Drawing.Point(147, 3);
             buttonSave.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             buttonSave.Name = "buttonSave";
             buttonSave.Size = new System.Drawing.Size(130, 29);
@@ -88,7 +88,7 @@
             // buttonCancel
             // 
             buttonCancel.Dock = System.Windows.Forms.DockStyle.Left;
-            buttonCancel.Location = new System.Drawing.Point(284, 3);
+            buttonCancel.Location = new System.Drawing.Point(285, 3);
             buttonCancel.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             buttonCancel.Name = "buttonCancel";
             buttonCancel.Size = new System.Drawing.Size(130, 29);
@@ -130,7 +130,7 @@
             chkSaveHtml.Location = new System.Drawing.Point(204, 323);
             chkSaveHtml.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             chkSaveHtml.Name = "chkSaveHtml";
-            chkSaveHtml.Size = new System.Drawing.Size(353, 26);
+            chkSaveHtml.Size = new System.Drawing.Size(354, 26);
             chkSaveHtml.TabIndex = 6;
             chkSaveHtml.UseVisualStyleBackColor = true;
             chkSaveHtml.CheckedChanged += chkHTML_CheckedChanged;
@@ -142,7 +142,7 @@
             chkSave.Location = new System.Drawing.Point(204, 451);
             chkSave.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             chkSave.Name = "chkSave";
-            chkSave.Size = new System.Drawing.Size(353, 26);
+            chkSave.Size = new System.Drawing.Size(354, 26);
             chkSave.TabIndex = 7;
             chkSave.UseVisualStyleBackColor = true;
             // 
@@ -153,7 +153,7 @@
             chkMinimiseToTray.Location = new System.Drawing.Point(204, 483);
             chkMinimiseToTray.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             chkMinimiseToTray.Name = "chkMinimiseToTray";
-            chkMinimiseToTray.Size = new System.Drawing.Size(353, 26);
+            chkMinimiseToTray.Size = new System.Drawing.Size(354, 26);
             chkMinimiseToTray.TabIndex = 8;
             chkMinimiseToTray.UseVisualStyleBackColor = true;
             // 
@@ -164,14 +164,14 @@
             chkWarn.Location = new System.Drawing.Point(204, 419);
             chkWarn.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             chkWarn.Name = "chkWarn";
-            chkWarn.Size = new System.Drawing.Size(353, 26);
+            chkWarn.Size = new System.Drawing.Size(354, 26);
             chkWarn.TabIndex = 9;
             chkWarn.UseVisualStyleBackColor = true;
             // 
             // setPathButton
             // 
             setPathButton.Anchor = System.Windows.Forms.AnchorStyles.None;
-            setPathButton.Location = new System.Drawing.Point(327, 3);
+            setPathButton.Location = new System.Drawing.Point(328, 3);
             setPathButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             setPathButton.Name = "setPathButton";
             setPathButton.Size = new System.Drawing.Size(24, 20);
@@ -187,7 +187,7 @@
             chkStartWithWindows.Location = new System.Drawing.Point(204, 387);
             chkStartWithWindows.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             chkStartWithWindows.Name = "chkStartWithWindows";
-            chkStartWithWindows.Size = new System.Drawing.Size(353, 26);
+            chkStartWithWindows.Size = new System.Drawing.Size(354, 26);
             chkStartWithWindows.TabIndex = 11;
             chkStartWithWindows.UseVisualStyleBackColor = true;
             // 
@@ -200,7 +200,7 @@
             minSecondsBetweenScrapesNumeric.Minimum = new decimal(new int[] { 5, 0, 0, 0 });
             minSecondsBetweenScrapesNumeric.Name = "minSecondsBetweenScrapesNumeric";
             minSecondsBetweenScrapesNumeric.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            minSecondsBetweenScrapesNumeric.Size = new System.Drawing.Size(353, 23);
+            minSecondsBetweenScrapesNumeric.Size = new System.Drawing.Size(354, 23);
             minSecondsBetweenScrapesNumeric.TabIndex = 12;
             minSecondsBetweenScrapesNumeric.Value = new decimal(new int[] { 5, 0, 0, 0 });
             // 
@@ -211,7 +211,7 @@
             directoryTextBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             directoryTextBox.Name = "directoryTextBox";
             directoryTextBox.ReadOnly = true;
-            directoryTextBox.Size = new System.Drawing.Size(315, 23);
+            directoryTextBox.Size = new System.Drawing.Size(316, 23);
             directoryTextBox.TabIndex = 13;
             tooltip.SetToolTip(directoryTextBox, "The directory that GChan will save files in. Double click to open or go File->Open Folder in GChan's main window.");
             directoryTextBox.DoubleClick += textBox1_DoubleClick;
@@ -236,7 +236,7 @@
             chkSaveThumbnails.Location = new System.Drawing.Point(204, 355);
             chkSaveThumbnails.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             chkSaveThumbnails.Name = "chkSaveThumbnails";
-            chkSaveThumbnails.Size = new System.Drawing.Size(353, 26);
+            chkSaveThumbnails.Size = new System.Drawing.Size(354, 26);
             chkSaveThumbnails.TabIndex = 24;
             tooltip.SetToolTip(chkSaveThumbnails, "When downloading thread HTML, also save thumbnails for images and place in \"thumb\" folder.");
             chkSaveThumbnails.UseVisualStyleBackColor = true;
@@ -302,7 +302,7 @@
             label8.TabIndex = 34;
             label8.Text = "Save URLs on exit";
             label8.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            tooltip.SetToolTip(label8, "Save ");
+            tooltip.SetToolTip(label8, "Persist scraping threads, boards & saved files/thumbnails across application startups / system reboots.");
             // 
             // label11
             // 
@@ -335,7 +335,7 @@
             renameThreadFolderCheckBox.Location = new System.Drawing.Point(204, 259);
             renameThreadFolderCheckBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             renameThreadFolderCheckBox.Name = "renameThreadFolderCheckBox";
-            renameThreadFolderCheckBox.Size = new System.Drawing.Size(353, 26);
+            renameThreadFolderCheckBox.Size = new System.Drawing.Size(354, 26);
             renameThreadFolderCheckBox.TabIndex = 14;
             renameThreadFolderCheckBox.UseVisualStyleBackColor = true;
             renameThreadFolderCheckBox.CheckedChanged += renameThreadFolderCheckBox_CheckedChanged;
@@ -347,7 +347,7 @@
             max1RequestPerSecondCheckBox.Location = new System.Drawing.Point(204, 99);
             max1RequestPerSecondCheckBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             max1RequestPerSecondCheckBox.Name = "max1RequestPerSecondCheckBox";
-            max1RequestPerSecondCheckBox.Size = new System.Drawing.Size(353, 26);
+            max1RequestPerSecondCheckBox.Size = new System.Drawing.Size(354, 26);
             max1RequestPerSecondCheckBox.TabIndex = 27;
             max1RequestPerSecondCheckBox.UseVisualStyleBackColor = true;
             // 
@@ -362,6 +362,7 @@
             imageFilenameFormatLabel.TabIndex = 15;
             imageFilenameFormatLabel.Text = "Files Filename Format";
             imageFilenameFormatLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            tooltip.SetToolTip(imageFilenameFormatLabel, "Filename format for saved files.");
             // 
             // imageFilenameFormatComboBox
             // 
@@ -372,7 +373,7 @@
             imageFilenameFormatComboBox.Location = new System.Drawing.Point(204, 227);
             imageFilenameFormatComboBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             imageFilenameFormatComboBox.Name = "imageFilenameFormatComboBox";
-            imageFilenameFormatComboBox.Size = new System.Drawing.Size(353, 23);
+            imageFilenameFormatComboBox.Size = new System.Drawing.Size(354, 23);
             imageFilenameFormatComboBox.TabIndex = 16;
             imageFilenameFormatComboBox.ValueMember = "EnumValue";
             // 
@@ -387,6 +388,7 @@
             threadFolderNameFormatLabel.TabIndex = 18;
             threadFolderNameFormatLabel.Text = "     Thread Folder Name Format";
             threadFolderNameFormatLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            tooltip.SetToolTip(threadFolderNameFormatLabel, "Format for thread folder names once removed.");
             // 
             // threadFolderNameFormatComboBox
             // 
@@ -397,7 +399,7 @@
             threadFolderNameFormatComboBox.Location = new System.Drawing.Point(204, 291);
             threadFolderNameFormatComboBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             threadFolderNameFormatComboBox.Name = "threadFolderNameFormatComboBox";
-            threadFolderNameFormatComboBox.Size = new System.Drawing.Size(353, 23);
+            threadFolderNameFormatComboBox.Size = new System.Drawing.Size(354, 23);
             threadFolderNameFormatComboBox.TabIndex = 19;
             threadFolderNameFormatComboBox.ValueMember = "EnumValue";
             // 
@@ -408,7 +410,7 @@
             checkForUpdatesOnStartCheckBox.Location = new System.Drawing.Point(204, 515);
             checkForUpdatesOnStartCheckBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             checkForUpdatesOnStartCheckBox.Name = "checkForUpdatesOnStartCheckBox";
-            checkForUpdatesOnStartCheckBox.Size = new System.Drawing.Size(353, 27);
+            checkForUpdatesOnStartCheckBox.Size = new System.Drawing.Size(354, 27);
             checkForUpdatesOnStartCheckBox.TabIndex = 21;
             checkForUpdatesOnStartCheckBox.UseVisualStyleBackColor = true;
             // 
@@ -420,7 +422,7 @@
             concurrentDownloadsNumeric.Maximum = new decimal(new int[] { 1000, 0, 0, 0 });
             concurrentDownloadsNumeric.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
             concurrentDownloadsNumeric.Name = "concurrentDownloadsNumeric";
-            concurrentDownloadsNumeric.Size = new System.Drawing.Size(353, 23);
+            concurrentDownloadsNumeric.Size = new System.Drawing.Size(354, 23);
             concurrentDownloadsNumeric.TabIndex = 23;
             concurrentDownloadsNumeric.Value = new decimal(new int[] { 1, 0, 0, 0 });
             // 
@@ -430,7 +432,7 @@
             userAgentTextBox.Location = new System.Drawing.Point(204, 35);
             userAgentTextBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             userAgentTextBox.Name = "userAgentTextBox";
-            userAgentTextBox.Size = new System.Drawing.Size(353, 23);
+            userAgentTextBox.Size = new System.Drawing.Size(354, 23);
             userAgentTextBox.TabIndex = 26;
             // 
             // settingsLayoutPanel
@@ -497,7 +499,7 @@
             settingsLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 32F));
             settingsLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 32F));
             settingsLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 32F));
-            settingsLayoutPanel.Size = new System.Drawing.Size(561, 545);
+            settingsLayoutPanel.Size = new System.Drawing.Size(562, 545);
             settingsLayoutPanel.TabIndex = 29;
             // 
             // label12
@@ -510,6 +512,7 @@
             label12.TabIndex = 38;
             label12.Text = "Download Thread HTML";
             label12.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            tooltip.SetToolTip(label12, "Save HTML of each scraped thread within each thread folder.");
             // 
             // label6
             // 
@@ -521,6 +524,7 @@
             label6.TabIndex = 32;
             label6.Text = "     Download Thumbnails";
             label6.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            tooltip.SetToolTip(label6, "If saving thread HTML, save thumbnails for file types that require them for improved offline viewing.");
             // 
             // label4
             // 
@@ -537,11 +541,12 @@
             // aboutRateLimitingButton
             // 
             aboutRateLimitingButton.Dock = System.Windows.Forms.DockStyle.Right;
-            aboutRateLimitingButton.Location = new System.Drawing.Point(435, 3);
+            aboutRateLimitingButton.Location = new System.Drawing.Point(436, 3);
             aboutRateLimitingButton.Name = "aboutRateLimitingButton";
             aboutRateLimitingButton.Size = new System.Drawing.Size(123, 26);
             aboutRateLimitingButton.TabIndex = 43;
             aboutRateLimitingButton.Text = "About Rate Limiting";
+            tooltip.SetToolTip(aboutRateLimitingButton, "Read more information about 4chan rate limiting.");
             aboutRateLimitingButton.UseVisualStyleBackColor = true;
             aboutRateLimitingButton.Click += aboutRateLimitingButton_Click;
             // 
@@ -557,7 +562,7 @@
             tableLayoutPanel2.Name = "tableLayoutPanel2";
             tableLayoutPanel2.RowCount = 1;
             tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            tableLayoutPanel2.Size = new System.Drawing.Size(355, 26);
+            tableLayoutPanel2.Size = new System.Drawing.Size(356, 26);
             tableLayoutPanel2.TabIndex = 44;
             // 
             // label15
@@ -570,6 +575,7 @@
             label15.TabIndex = 41;
             label15.Text = "Check for updates on startup";
             label15.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            tooltip.SetToolTip(label15, "Check for new stable versions of GChan when starting the application.");
             // 
             // label7
             // 
@@ -581,6 +587,7 @@
             label7.TabIndex = 33;
             label7.Text = "Show Exit Warning";
             label7.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            tooltip.SetToolTip(label7, "Display warning upon exit if scrape list is not empty.");
             // 
             // saveCloseLayoutPanel
             // 
@@ -590,11 +597,11 @@
             saveCloseLayoutPanel.Controls.Add(buttonSave, 0, 0);
             saveCloseLayoutPanel.Controls.Add(buttonCancel, 1, 0);
             saveCloseLayoutPanel.Dock = System.Windows.Forms.DockStyle.Bottom;
-            saveCloseLayoutPanel.Location = new System.Drawing.Point(0, 558);
+            saveCloseLayoutPanel.Location = new System.Drawing.Point(0, 554);
             saveCloseLayoutPanel.Name = "saveCloseLayoutPanel";
             saveCloseLayoutPanel.RowCount = 1;
             saveCloseLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            saveCloseLayoutPanel.Size = new System.Drawing.Size(561, 35);
+            saveCloseLayoutPanel.Size = new System.Drawing.Size(562, 35);
             saveCloseLayoutPanel.TabIndex = 30;
             // 
             // SettingsForm
@@ -603,7 +610,7 @@
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            ClientSize = new System.Drawing.Size(561, 593);
+            ClientSize = new System.Drawing.Size(562, 589);
             ControlBox = false;
             Controls.Add(saveCloseLayoutPanel);
             Controls.Add(settingsLayoutPanel);
