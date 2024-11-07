@@ -49,10 +49,6 @@ namespace GChan.Forms
             listsTabControl = new System.Windows.Forms.TabControl();
             threadsTabPage = new System.Windows.Forms.TabPage();
             threadGridView = new Controls.PreferencesDataGridView();
-            threadGridSubjectColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            threadGridSiteColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            threadGridBoardCodeColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            threadGridFileCountColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             threadsContextMenu = new System.Windows.Forms.ContextMenuStrip(components);
             openFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             openInBrowserToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -77,6 +73,11 @@ namespace GChan.Forms
             clearAllButton = new System.Windows.Forms.Button();
             clipboardButton = new System.Windows.Forms.Button();
             toolTip = new System.Windows.Forms.ToolTip(components);
+            threadGridSubjectColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            threadGridSiteColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            threadGridBoardCodeColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            Id = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            threadGridFileCountColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             menuStrip.SuspendLayout();
             listsTabControl.SuspendLayout();
             threadsTabPage.SuspendLayout();
@@ -159,7 +160,7 @@ namespace GChan.Forms
             changelogToolStripMenuItem1.Image = Properties.Resources.alert;
             changelogToolStripMenuItem1.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             changelogToolStripMenuItem1.Name = "changelogToolStripMenuItem1";
-            changelogToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            changelogToolStripMenuItem1.Size = new System.Drawing.Size(171, 22);
             changelogToolStripMenuItem1.Text = "&Changelog";
             changelogToolStripMenuItem1.Click += changelogToolStripMenuItem_Click;
             // 
@@ -168,7 +169,7 @@ namespace GChan.Forms
             aboutToolStripMenuItem1.Image = Properties.Resources.question;
             aboutToolStripMenuItem1.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             aboutToolStripMenuItem1.Name = "aboutToolStripMenuItem1";
-            aboutToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            aboutToolStripMenuItem1.Size = new System.Drawing.Size(171, 22);
             aboutToolStripMenuItem1.Text = "&About";
             aboutToolStripMenuItem1.Click += aboutToolStripMenuItem_Click;
             // 
@@ -177,7 +178,7 @@ namespace GChan.Forms
             checkForUpdatesToolStripMenuItem.Image = Properties.Resources.download;
             checkForUpdatesToolStripMenuItem.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             checkForUpdatesToolStripMenuItem.Name = "checkForUpdatesToolStripMenuItem";
-            checkForUpdatesToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            checkForUpdatesToolStripMenuItem.Size = new System.Drawing.Size(171, 22);
             checkForUpdatesToolStripMenuItem.Text = "Check for Updates";
             checkForUpdatesToolStripMenuItem.Click += checkForUpdatesToolStripMenuItem_Click;
             // 
@@ -185,27 +186,27 @@ namespace GChan.Forms
             // 
             donateToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { kofiToolStripMenuItem, payPalToolStripMenuItem, gitHubSponsorToolStripMenuItem });
             donateToolStripMenuItem.Name = "donateToolStripMenuItem";
-            donateToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            donateToolStripMenuItem.Size = new System.Drawing.Size(171, 22);
             donateToolStripMenuItem.Text = "Donate";
             // 
             // kofiToolStripMenuItem
             // 
             kofiToolStripMenuItem.Name = "kofiToolStripMenuItem";
-            kofiToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            kofiToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
             kofiToolStripMenuItem.Text = "Ko-fi";
             kofiToolStripMenuItem.Click += kofiToolStripMenuItem_Click;
             // 
             // payPalToolStripMenuItem
             // 
             payPalToolStripMenuItem.Name = "payPalToolStripMenuItem";
-            payPalToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            payPalToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
             payPalToolStripMenuItem.Text = "PayPal";
             payPalToolStripMenuItem.Click += payPalToolStripMenuItem_Click;
             // 
             // gitHubSponsorToolStripMenuItem
             // 
             gitHubSponsorToolStripMenuItem.Name = "gitHubSponsorToolStripMenuItem";
-            gitHubSponsorToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            gitHubSponsorToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
             gitHubSponsorToolStripMenuItem.Text = "GitHub Sponsor";
             gitHubSponsorToolStripMenuItem.Click += gitHubSponsorToolStripMenuItem_Click;
             // 
@@ -258,7 +259,7 @@ namespace GChan.Forms
             threadGridView.BackgroundColor = System.Drawing.Color.White;
             threadGridView.BorderStyle = System.Windows.Forms.BorderStyle.None;
             threadGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            threadGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] { threadGridSubjectColumn, threadGridSiteColumn, threadGridBoardCodeColumn, threadGridFileCountColumn });
+            threadGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] { threadGridSubjectColumn, threadGridSiteColumn, threadGridBoardCodeColumn, Id, threadGridFileCountColumn });
             threadGridView.ContextMenuStrip = threadsContextMenu;
             threadGridView.DataSource = threadsBindingSource;
             dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
@@ -287,39 +288,6 @@ namespace GChan.Forms
             threadGridView.TabIndex = 1;
             threadGridView.DataError += threadGridView_DataError;
             threadGridView.MouseDown += threadGridView_MouseDown;
-            // 
-            // threadGridSubjectColumn
-            // 
-            threadGridSubjectColumn.DataPropertyName = "Subject";
-            threadGridSubjectColumn.FillWeight = 25F;
-            threadGridSubjectColumn.HeaderText = "Subject";
-            threadGridSubjectColumn.Name = "threadGridSubjectColumn";
-            threadGridSubjectColumn.ReadOnly = true;
-            // 
-            // threadGridSiteColumn
-            // 
-            threadGridSiteColumn.DataPropertyName = "SiteDisplayName";
-            threadGridSiteColumn.FillWeight = 8F;
-            threadGridSiteColumn.HeaderText = "Site";
-            threadGridSiteColumn.Name = "threadGridSiteColumn";
-            threadGridSiteColumn.ReadOnly = true;
-            threadGridSiteColumn.ToolTipText = "The website the thread is hosted on.";
-            // 
-            // threadGridBoardCodeColumn
-            // 
-            threadGridBoardCodeColumn.DataPropertyName = "BoardCode";
-            threadGridBoardCodeColumn.FillWeight = 8.387236F;
-            threadGridBoardCodeColumn.HeaderText = "Board";
-            threadGridBoardCodeColumn.Name = "threadGridBoardCodeColumn";
-            threadGridBoardCodeColumn.ReadOnly = true;
-            // 
-            // threadGridFileCountColumn
-            // 
-            threadGridFileCountColumn.DataPropertyName = "FileCount";
-            threadGridFileCountColumn.FillWeight = 8.387236F;
-            threadGridFileCountColumn.HeaderText = "File Count";
-            threadGridFileCountColumn.Name = "threadGridFileCountColumn";
-            threadGridFileCountColumn.ReadOnly = true;
             // 
             // threadsContextMenu
             // 
@@ -529,6 +497,47 @@ namespace GChan.Forms
             clipboardButton.UseVisualStyleBackColor = true;
             clipboardButton.Click += clipboardButton_Click;
             // 
+            // threadGridSubjectColumn
+            // 
+            threadGridSubjectColumn.DataPropertyName = "Subject";
+            threadGridSubjectColumn.FillWeight = 25F;
+            threadGridSubjectColumn.HeaderText = "Subject";
+            threadGridSubjectColumn.Name = "threadGridSubjectColumn";
+            threadGridSubjectColumn.ReadOnly = true;
+            // 
+            // threadGridSiteColumn
+            // 
+            threadGridSiteColumn.DataPropertyName = "SiteDisplayName";
+            threadGridSiteColumn.FillWeight = 8F;
+            threadGridSiteColumn.HeaderText = "Site";
+            threadGridSiteColumn.Name = "threadGridSiteColumn";
+            threadGridSiteColumn.ReadOnly = true;
+            threadGridSiteColumn.ToolTipText = "The website the thread is hosted on.";
+            // 
+            // threadGridBoardCodeColumn
+            // 
+            threadGridBoardCodeColumn.DataPropertyName = "BoardCode";
+            threadGridBoardCodeColumn.FillWeight = 8.387236F;
+            threadGridBoardCodeColumn.HeaderText = "Board";
+            threadGridBoardCodeColumn.Name = "threadGridBoardCodeColumn";
+            threadGridBoardCodeColumn.ReadOnly = true;
+            // 
+            // Id
+            // 
+            Id.DataPropertyName = "Id";
+            Id.FillWeight = 11F;
+            Id.HeaderText = "Id";
+            Id.Name = "Id";
+            Id.ReadOnly = true;
+            // 
+            // threadGridFileCountColumn
+            // 
+            threadGridFileCountColumn.DataPropertyName = "FileCount";
+            threadGridFileCountColumn.FillWeight = 8.387236F;
+            threadGridFileCountColumn.HeaderText = "File Count";
+            threadGridFileCountColumn.Name = "threadGridFileCountColumn";
+            threadGridFileCountColumn.ReadOnly = true;
+            // 
             // MainForm
             // 
             AcceptButton = addButton;
@@ -612,15 +621,16 @@ namespace GChan.Forms
         internal System.Windows.Forms.TextBox urlTextBox;
         internal System.Windows.Forms.ToolStripMenuItem updateAvailableToolStripMenuItem;
         private System.Windows.Forms.DataGridViewTextBoxColumn fileCountDataGridViewTextBoxColumn;
-        private System.Windows.Forms.DataGridViewTextBoxColumn threadGridSubjectColumn;
-        private System.Windows.Forms.DataGridViewTextBoxColumn threadGridSiteColumn;
-        private System.Windows.Forms.DataGridViewTextBoxColumn threadGridBoardCodeColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn threadGridIdColumn;
-        private System.Windows.Forms.DataGridViewTextBoxColumn threadGridFileCountColumn;
         private System.Windows.Forms.ToolStripMenuItem donateToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem kofiToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem payPalToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem gitHubSponsorToolStripMenuItem;
+        private System.Windows.Forms.DataGridViewTextBoxColumn threadGridSubjectColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn threadGridSiteColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn threadGridBoardCodeColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Id;
+        private System.Windows.Forms.DataGridViewTextBoxColumn threadGridFileCountColumn;
     }
 }
 
