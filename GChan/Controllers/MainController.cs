@@ -70,7 +70,7 @@ namespace GChan.Controllers
             // Form Setup
             Form = mainForm;
 
-            Model = new MainFormModel(Form);
+            Model = new MainFormModel(Form, processQueue);
             Form.mainFormModelBindingSource.DataSource = Model;
 
             UpdateController.Instance.UpdateCheckFinished += Instance_UpdateCheckFinished;
@@ -390,6 +390,18 @@ namespace GChan.Controllers
             }
 
             return false;
+        }
+
+        internal void PauseQueue()
+        {
+            logger.Info("Pausing Queue.");
+            processQueue.Pause = true;
+        }
+
+        internal void ResumeQueue()
+        {
+            logger.Info("Resuming Queue.");
+            processQueue.Pause = false;
         }
     }
 }

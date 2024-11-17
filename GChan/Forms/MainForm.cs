@@ -411,5 +411,30 @@ namespace GChan.Forms
         {
             Utils.OpenWebpage("https://github.com/sponsors/Issung");
         }
+
+        private void pauseDownloadsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Controller.PauseQueue();
+        }
+
+        private void resumeDownloadsToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            Controller.ResumeQueue();
+        }
+
+        private void resumeDownloadsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Controller.ResumeQueue();
+        }
+
+        private void resumeDownloadsToolStripMenuItem2_Click(object sender, EventArgs e)
+        {
+            Controller.ResumeQueue();
+        }
+
+        private void pauseDownloadsToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            Controller.PauseQueue();
+        }
     }
 }

@@ -1,12 +1,10 @@
-﻿using GChan.Helpers;
-using GChan.Models;
+﻿using GChan.Models;
 using GChan.Models.Trackers;
 using GChan.Properties;
 using Nito.AsyncEx;
 using NLog;
 using System;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -24,12 +22,37 @@ namespace GChan.Services
         private readonly ConcurrentDistinctQueue<IProcessable> defaultPriorityQueue = new(LockRecursionPolicy.SupportsRecursion);
         private readonly ConcurrentDistinctQueue<IProcessable> lowPriorityQueue = new(LockRecursionPolicy.SupportsRecursion);
         private readonly AsyncManualResetEvent trackerAddedSignal = new();
+        private readonly AsyncManualResetEvent resumeSignal = new();
         private readonly TaskPool<ProcessResult> pool;
         private readonly Task task;
+        private bool pause;
 
         private readonly Action<Tracker> addTrackerCallback;
         private readonly CancellationToken shutdownCancellationToken;
         private readonly ProcessableParams processableParams;
+
+        public event Action? PausedPropertyChanged;
+
+        public bool Pause
+        {
+            get => pause;
+            set
+            {
+                var raiseEvent = pause != value;    // Only raise event if new value is different.
+
+                pause = value;
+
+                if (!pause)
+                {
+                    resumeSignal.Set();
+                }
+
+                if (raiseEvent)
+                {
+                    PausedPropertyChanged?.Invoke();
+                }
+            }
+        }
 
         public ProcessQueue(
             IProcessableHooks hooks,
@@ -62,6 +85,13 @@ namespace GChan.Services
         {
             while (!shutdownCancellationToken.IsCancellationRequested)
             {
+                if (Pause)
+                {
+                    // If paused wait on the resume signal until it is set.
+                    await resumeSignal.WaitAsync();
+                    resumeSignal.Reset();   // Reset it in case pause is used again later.
+                }
+
                 var item = MaybeDequeue();
 
                 if (item != null)
