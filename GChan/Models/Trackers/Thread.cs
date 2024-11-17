@@ -39,6 +39,10 @@ namespace GChan.Models.Trackers
 
         public ProcessPriority Priority { get; protected set; } = ProcessPriority.Default;
 
+        /// <summary>
+        /// Subject for GUI display purposes.<br/>
+        /// Displays "Loading..." if thread has not yet been scraped, displays "No Subject" if subject is null.
+        /// </summary>
         public string Subject
         {
             get => hasScraped ? subject ?? NO_SUBJECT : "Loading...";
@@ -66,7 +70,10 @@ namespace GChan.Models.Trackers
 
         public bool Gone { get; protected set; } = false;
 
-        protected string? subject = null;
+        /// <summary>
+        /// Internal representation of subject, may or may not be the subject. Could be username, thread body text, or the GChan user's custom entry.
+        /// </summary>
+        internal string? subject { get; private set; } = null;
         private int? fileCount = null;
 
         private bool hasScraped => fileCount != null || subject != null;

@@ -39,7 +39,7 @@ namespace GChan.Data
             this.Site = thread.Site;
             this.BoardCode = thread.BoardCode.Trim('/');
             this.Id = thread.Id;
-            this.Subject = thread.Subject;
+            this.Subject = thread.subject;
             this.FileCount = thread.FileCount;
             this.LastScrape = thread.LastScrape;
             this.SavedAssetIds = thread.SavedAssetIds;
