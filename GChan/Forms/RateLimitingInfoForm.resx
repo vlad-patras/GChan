@@ -126,6 +126,8 @@ The 4chan API documentation (here https://github.com/4chan/4chan-API) suggests n
 
 You can check if you are being rate limited by opening the log files. You will see occurences of "429" and "Too Many Requests" if you are being limited.
 
+Note: Navigating/using 4chan in your browser counts towards your IP address' usage tracking. So it may not be wise to be scraping with GChan while simultaenously browsing 4chan. You may use the "pause" functionality in GChan to temporarily stop scraping while browsing, then resume afterwards.
+
 Thumbnails Note: The thumbnail scraping setting only scrapes thumbnails for file types that need it (plain images don't). Thumbnails require their own network request each, so if you have this setting on and are scraping a lot of thumbnail-heavy threads, they will consume a lot of time in the queue. Keep this in mind.</value>
   </data>
 </root>

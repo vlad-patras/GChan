@@ -50,7 +50,7 @@
             tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 50F));
             tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 32F));
-            tableLayoutPanel.Size = new System.Drawing.Size(565, 377);
+            tableLayoutPanel.Size = new System.Drawing.Size(565, 440);
             tableLayoutPanel.TabIndex = 0;
             // 
             // label1
@@ -71,15 +71,14 @@
             label2.Dock = System.Windows.Forms.DockStyle.Fill;
             label2.Location = new System.Drawing.Point(3, 50);
             label2.Name = "label2";
-            label2.Size = new System.Drawing.Size(559, 295);
+            label2.Size = new System.Drawing.Size(559, 358);
             label2.TabIndex = 1;
             label2.Text = resources.GetString("label2.Text");
-            label2.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // closeButton
             // 
             closeButton.Dock = System.Windows.Forms.DockStyle.Fill;
-            closeButton.Location = new System.Drawing.Point(3, 348);
+            closeButton.Location = new System.Drawing.Point(3, 411);
             closeButton.Name = "closeButton";
             closeButton.Size = new System.Drawing.Size(559, 26);
             closeButton.TabIndex = 2;
@@ -91,7 +90,7 @@
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            ClientSize = new System.Drawing.Size(565, 377);
+            ClientSize = new System.Drawing.Size(565, 440);
             Controls.Add(tableLayoutPanel);
             Name = "RateLimitingInfoForm";
             ShowIcon = false;
