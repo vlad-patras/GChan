@@ -1,9 +1,12 @@
-﻿using GChan.Models;
+﻿using GChan.Helpers;
+using GChan.Models;
 using GChan.Models.Trackers;
 using GChan.Properties;
+using Nito.AsyncEx;
 using NLog;
 using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -14,11 +17,10 @@ namespace GChan.Services
     /// <summary>
     /// A queue for <see cref="IProcessable"/>s. Controls how often they are started.
     /// </summary>
-    // TODO: Maybe need a high priority queue for UI interactions (threads/boards being added by user). Take from that queue first before falling back to main queue.
-    // And maybe a low priority queue for thumbnails? IProcessable should have an enum property "Priority" that can change itself (e.g. a new thread is high, and after first scrape goes back to normal).
     public class ProcessQueue
     {
         private static readonly ILogger logger = LogManager.GetCurrentClassLogger();
+        private readonly ConcurrentDistinctQueue<IProcessable> highPriorityQueue = new(LockRecursionPolicy.SupportsRecursion);
         private readonly ConcurrentDistinctQueue<IProcessable> defaultPriorityQueue = new(LockRecursionPolicy.SupportsRecursion);
         private readonly ConcurrentDistinctQueue<IProcessable> lowPriorityQueue = new(LockRecursionPolicy.SupportsRecursion);
         private readonly TaskPool<ProcessResult> pool;
@@ -44,18 +46,14 @@ namespace GChan.Services
 
         public void Enqueue(IProcessable processable)
         {
-            if (processable.Priority == ProcessPriority.Default)
+            var wasQueued = processable.Priority switch
             {
-                defaultPriorityQueue.Enqueue(processable);
-            }
-            else if (processable.Priority == ProcessPriority.Low)
-            {
-                lowPriorityQueue.Enqueue(processable);
-            }
-            else
-            {
-                throw new InvalidOperationException($"Unknown process priority {processable.Priority}.");
-            }
+                ProcessPriority.High => highPriorityQueue.Enqueue(processable),
+                ProcessPriority.Default => defaultPriorityQueue.Enqueue(processable),
+                ProcessPriority.Low => lowPriorityQueue.Enqueue(processable),
+                _ => throw new InvalidOperationException($"Unknown process priority {processable.Priority}.")
+            };
+
         }
 
         public async Task WorkAsync()
@@ -85,7 +83,7 @@ namespace GChan.Services
         /// </summary>
         private IProcessable? MaybeDequeue()
         {
-            var processable = DequeueFrom(defaultPriorityQueue) ?? DequeueFrom(lowPriorityQueue);
+            var processable = DequeueFrom(highPriorityQueue) ?? DequeueFrom(defaultPriorityQueue) ?? DequeueFrom(lowPriorityQueue);
 
             if (processable == null)
             {

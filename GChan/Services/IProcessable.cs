@@ -51,6 +51,7 @@ namespace GChan.Services
     public enum ProcessPriority
     {
         Default,
+        High,
         Low,
     }
 

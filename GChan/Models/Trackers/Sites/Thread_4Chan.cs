@@ -1,13 +1,13 @@
 ﻿using GChan.Data;
 using GChan.Data.Models;
+using GChan.Forms;
 using GChan.Helpers.Extensions;
 using GChan.Properties;
+using GChan.Services;
 using Newtonsoft.Json.Linq;
 using System;
 using System.IO;
 using System.Linq;
-using System.Net;
-using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -22,25 +22,26 @@ namespace GChan.Models.Trackers.Sites
         public const string BOARD_CODE_REGEX = "(?<=((chan|channel).org/))[a-zA-Z0-9]+(?=(/))?";
         public const string ID_CODE_REGEX = "(?<=(thread/))[0-9]*(?=(.*))";
 
-        public Thread_4Chan(string url, string? subject = null, int? fileCount = null) : base(url)
+        public Thread_4Chan(string url) : base(url, ProcessPriority.High)  // High priority for first scrape to fetch subject, filecount, etc for GUI display.
         {
             Site = Site._4chan;
+            ConfigureFromUrl(url);
+        }
 
-            var match = Regex.Match(url, @"boards.(4chan|4channel).org/[a-zA-Z0-9]*?/thread/\d*");
-            Url = "https://" + match.Groups[0].Value;
-
-            var boardCodeMatch = Regex.Match(url, BOARD_CODE_REGEX);
-            BoardCode = boardCodeMatch.Groups[0].Value;
-
-            var idCodeMatch = Regex.Match(url, ID_CODE_REGEX);
-            Id = long.Parse(idCodeMatch.Groups[0].Value);
-
-            SaveTo = Path.Combine(Settings.Default.SavePath, Site.ToString().TrimStart('_'), BoardCode, Id.ToString());
-
-            Subject = subject ?? GetThreadSubject();
+        /// <summary>
+        /// For use from boards scraping.
+        /// </summary>
+        public Thread_4Chan(string url, string subject, int fileCount) : base(url)
+        {
+            Site = Site._4chan;
+            ConfigureFromUrl(url);
+            Subject = subject;
             FileCount = fileCount;
         }
 
+        /// <summary>
+        /// For use when loading from database.
+        /// </summary>
         public Thread_4Chan(ThreadData data) : base($"https://boards.4chan.org/{data.BoardCode}/thread/{data.Id}/")
         {
             this.Site = Site._4chan;
@@ -75,8 +76,13 @@ namespace GChan.Models.Trackers.Sites
             {
                 // Thread has not been modified since last scrape.
                 return null;
-            }    
+            }
 
+            if (subject == null)
+            {
+                var newSubject = ExtractSubject(jObject);
+                MainForm.StaticInvoke(() => Subject = newSubject);
+            }
             uploads = ScrapeUploads(jObject);
 
             if (saveHtml)
@@ -211,46 +217,33 @@ namespace GChan.Models.Trackers.Sites
             return html;
         }
 
-        // TODO: Web request here that is non-async and not rate limited (via IProcessable pipeline).
-        private string GetThreadSubject()
+        private void ConfigureFromUrl(string url)
         {
-            string subject = NO_SUBJECT;
+            var match = Regex.Match(url, @"boards.(4chan|4channel).org/[a-zA-Z0-9]*?/thread/\d*");
+            Url = "https://" + match.Groups[0].Value;
 
-            try
-            {
-                string jsonUrl = "https://a.4cdn.org/" + BoardCode + "/thread/" + Id + ".json";
+            var boardCodeMatch = Regex.Match(url, BOARD_CODE_REGEX);
+            BoardCode = boardCodeMatch.Groups[0].Value;
 
-                const string SUB_HEADER = "\"sub\":\"";
-                const string SUB_ENDER = "\",";
+            var idCodeMatch = Regex.Match(url, ID_CODE_REGEX);
+            Id = long.Parse(idCodeMatch.Groups[0].Value);
 
-                var web = Utils.GetHttpClient();
+            SaveTo = Path.Combine(Settings.Default.SavePath, Site.ToString().TrimStart('_'), BoardCode, Id.ToString());
+        }
 
-                var request = new HttpRequestMessage(HttpMethod.Get, jsonUrl);
-                var response = web.Send(request);
-                var rawJson = response.ReadAsString();
-                int subStartIndex = rawJson.IndexOf(SUB_HEADER);
+        private static string? ExtractSubject(JObject jObject)
+        {
+            var post = jObject.SelectToken("posts[0]") ?? throw new Exception("A thread must have a first post.");
 
-                // If "Sub":" was found in json then there is a subject.
-                if (subStartIndex >= 0)
-                {
-                    //Increment along the rawjson until the ending ", sequence is found, then substring it to extract the subject.
-                    for (int i = subStartIndex; i < rawJson.Length; i++)
-                    {
-                        if (rawJson.Substring(i, SUB_ENDER.Length) == SUB_ENDER)
-                        {
-                            subject = rawJson.Substring(subStartIndex + SUB_HEADER.Length, i - (subStartIndex + SUB_HEADER.Length));
-                            subject = Utils.SanitiseSubject(WebUtility.HtmlDecode(subject));
-                            break;
-                        }
-                    }
-                }
-            }
-            catch
-            {
-                subject = NO_SUBJECT;
-            }
+            var sub = post["sub"]?.Value<string>();
 
-            return subject;
+            var name = post["name"]?.Value<string>();
+            var nameOk = name != "Anonymous";   // Use name if not "Anonymous". Users often put the subject in the name field.
+
+            var comment = post["com"]?.Value<string>(); // "com" (comment) is the text of the post.
+            var commentOk = comment != null && comment.Length < 64 && !comment.Contains("<br>");    // Use the comment as the subject if it is present, not too long and doesn't have any linebreaks.
+
+            return sub ?? (nameOk ? name : null) ?? (commentOk ? comment : null);
         }
     }
 }

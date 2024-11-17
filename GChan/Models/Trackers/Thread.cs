@@ -1,4 +1,5 @@
-﻿using GChan.Helpers.Extensions;
+﻿using GChan.Forms;
+using GChan.Helpers.Extensions;
 using GChan.Properties;
 using GChan.Services;
 using System;
@@ -28,7 +29,7 @@ namespace GChan.Models.Trackers
         public AssetIdsCollection SeenAssetIds { get; protected init; } = [];
 
         /// <summary>
-        /// Assetss that have successfully completed processing. This should be saved in the database.
+        /// Assets that have successfully completed processing. This should be saved in the database.
         /// </summary>
         public AssetIdsCollection SavedAssetIds { get; protected init; } = [];
 
@@ -36,11 +37,11 @@ namespace GChan.Models.Trackers
 
         public DateTimeOffset? ReadyToProcessAt => LastScrape + TimeSpan.FromSeconds(Settings.Default.MinSecondsBetweenScrapes);
 
-        public ProcessPriority Priority => ProcessPriority.Default;
+        public ProcessPriority Priority { get; protected set; } = ProcessPriority.Default;
 
         public string Subject
         {
-            get => subject ?? NO_SUBJECT;
+            get => hasScraped ? subject ?? NO_SUBJECT : "Loading...";
             set
             {
                 subject = value;
@@ -59,22 +60,21 @@ namespace GChan.Models.Trackers
             set
             {
                 fileCount = value;
-
-                if (!Program.mainForm.Disposing && !Program.mainForm.IsDisposed)
-                {
-                    Program.mainForm.Invoke(() => { NotifyPropertyChanged(nameof(FileCount)); });
-                }
+                MainForm.StaticInvoke(() => NotifyPropertyChanged());
             }
         }
 
         public bool Gone { get; protected set; } = false;
 
-        private string? subject = null;
+        protected string? subject = null;
         private int? fileCount = null;
 
-        protected Thread(string url) : base(url)
+        private bool hasScraped => fileCount != null || subject != null;
+
+        protected Thread(string url, ProcessPriority priority = ProcessPriority.Default) : base(url)
         {
             Type = Type.Thread;
+            Priority = priority;
 
             if (url.Contains("?"))
             {
@@ -127,6 +127,7 @@ namespace GChan.Models.Trackers
 
                 FileCount = results.Uploads.Length;
                 SeenAssetIds.AddRange(newAssets);
+                Priority = ProcessPriority.Default; // Set priority to default. May have been set to "high" if thread was new.
 
                 return new(this, removeFromQueue: false, newProcessables: newAssets);
             }

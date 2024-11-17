@@ -5,10 +5,8 @@ using GChan.Properties;
 using GChan.ViewModels;
 using NLog;
 using System;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Windows.Forms;
 using Type = GChan.Models.Trackers.Type;
 
@@ -16,6 +14,8 @@ namespace GChan.Forms
 {
     public partial class MainForm : Form
     {
+        private static MainForm instance;
+
         internal MainFormModel Model => Controller.Model;
 
         private readonly MainController Controller;
@@ -32,8 +32,16 @@ namespace GChan.Forms
         public MainForm()
         {
             InitializeComponent();
-
             Controller = new MainController(this);
+            instance = this;
+        }
+
+        public static void StaticInvoke(Action action)
+        {
+            if (!instance.Disposing && !instance.IsDisposed)
+            {
+                instance.Invoke(action);
+            }
         }
 
         private async void MainForm_Load(object sender, EventArgs e)
