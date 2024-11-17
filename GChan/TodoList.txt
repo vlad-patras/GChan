@@ -1,6 +1,4 @@
 ﻿Version 6 & Onwards:
-	Dragging a thread to add it freezes GChan & Browser because of the web request and weird Windows stuff.. Make it async await should fix that.
-	Adding a valid thread URL that is already gone (404) causes it to still appear in threadlist as "No subject".
 	Add pause/resume feature, accessible from main UI & system tray. Should be easy with the new processing queue.
 
 
