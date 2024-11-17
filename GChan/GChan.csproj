@@ -73,6 +73,7 @@
 		</PackageReference>
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" />
 		<PackageReference Include="Newtonsoft.Json" />
+		<PackageReference Include="Nito.AsyncEx" />
 		<PackageReference Include="NLog" />
 		<PackageReference Include="Onova" />
 		<PackageReference Include="System.Text.Json" />

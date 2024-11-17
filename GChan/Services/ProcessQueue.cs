@@ -23,6 +23,7 @@ namespace GChan.Services
         private readonly ConcurrentDistinctQueue<IProcessable> highPriorityQueue = new(LockRecursionPolicy.SupportsRecursion);
         private readonly ConcurrentDistinctQueue<IProcessable> defaultPriorityQueue = new(LockRecursionPolicy.SupportsRecursion);
         private readonly ConcurrentDistinctQueue<IProcessable> lowPriorityQueue = new(LockRecursionPolicy.SupportsRecursion);
+        private readonly AsyncManualResetEvent trackerAddedSignal = new();
         private readonly TaskPool<ProcessResult> pool;
         private readonly Task task;
 
@@ -54,6 +55,7 @@ namespace GChan.Services
                 _ => throw new InvalidOperationException($"Unknown process priority {processable.Priority}.")
             };
 
+            trackerAddedSignal.Set();
         }
 
         public async Task WorkAsync()
@@ -71,7 +73,16 @@ namespace GChan.Services
                     pool.Enqueue(async () => await item.ProcessAsync(processableParams, combinedToken));
                 }
 
-                if (Settings.Default.Max1RequestPerSecond)
+                if (item == null)
+                {
+                    await Task.WhenAny(
+                        Task.Delay(TimeSpan.FromSeconds(15)),
+                        trackerAddedSignal.WaitAsync()
+                    );
+
+                    trackerAddedSignal.Reset();
+                }
+                else if (Settings.Default.Max1RequestPerSecond)
                 {
                     await Task.Delay(TimeSpan.FromSeconds(1));
                 }
