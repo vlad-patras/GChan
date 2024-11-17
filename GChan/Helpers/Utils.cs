@@ -25,7 +25,7 @@ namespace GChan
     {
         public const string PROGRAM_NAME = "GChan";
 
-        public static readonly char[] IllegalSubjectCharacters = Path.GetInvalidFileNameChars();
+        public static readonly char[] IllegalSubjectCharacters = Path.GetInvalidPathChars();
         public static readonly char[] IllegalFilenameCharacters = Path.GetInvalidFileNameChars();
 
         private static readonly ILogger logger = LogManager.GetCurrentClassLogger();

@@ -243,7 +243,9 @@ namespace GChan.Models.Trackers.Sites
             var comment = post["com"]?.Value<string>(); // "com" (comment) is the text of the post.
             var commentOk = comment != null && comment.Length < 64 && !comment.Contains("<br>");    // Use the comment as the subject if it is present, not too long and doesn't have any linebreaks.
 
-            return sub ?? (nameOk ? name : null) ?? (commentOk ? comment : null);
+            var result = sub ?? (nameOk ? name : null) ?? (commentOk ? comment : null);
+
+            return Utils.SanitiseSubject(result);
         }
     }
 }
