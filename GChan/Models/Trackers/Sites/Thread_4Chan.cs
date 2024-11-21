@@ -1,4 +1,4 @@
-﻿using GChan.Data;
+using GChan.Data;
 using GChan.Data.Models;
 using GChan.Forms;
 using GChan.Helpers.Extensions;
@@ -51,7 +51,7 @@ namespace GChan.Models.Trackers.Sites
             this.Subject = data.Subject;
             this.FileCount = data.FileCount;
             this.SavedAssetIds = data.SavedAssetIds;
-            this.RefreshDownloadCount();
+            this.NotifyDownloadCountChanged();
 
             SaveTo = Path.Combine(Settings.Default.SavePath, Site.ToString().TrimStart('_'), BoardCode, Id.ToString());
         }

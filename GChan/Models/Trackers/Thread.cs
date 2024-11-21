@@ -70,19 +70,14 @@ namespace GChan.Models.Trackers
 
         public int? DownloadCount
         {
-            get => downloadCount;
-            set
-            {
-                downloadCount = value;
-                MainForm.StaticInvoke(() => NotifyPropertyChanged());
-            }
-        }
-
-        public void RefreshDownloadCount()
-        {
-            this.DownloadCount = SavedAssetIds
+            get => SavedAssetIds
                     .Where(id => id.Type == AssetType.Upload)
                     .Count();
+        }
+
+        public void NotifyDownloadCountChanged()
+        {
+            MainForm.StaticInvoke(() => NotifyPropertyChanged(nameof(DownloadCount)));
         }
 
         public bool Gone { get; protected set; } = false;
@@ -153,7 +148,6 @@ namespace GChan.Models.Trackers
                 FileCount = results.Uploads.Length;
                 SeenAssetIds.AddRange(newAssets);
                 Priority = ProcessPriority.Default; // Set priority to default. May have been set to "high" if thread was new.
-                this.RefreshDownloadCount();
 
                 return new(this, removeFromQueue: false, newProcessables: newAssets);
             }
