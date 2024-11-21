@@ -1,4 +1,4 @@
-using GChan.Data;
+﻿using GChan.Data;
 using GChan.Data.Models;
 using GChan.Forms;
 using GChan.Helpers.Extensions;
@@ -51,6 +51,7 @@ namespace GChan.Models.Trackers.Sites
             this.Subject = data.Subject;
             this.FileCount = data.FileCount;
             this.SavedAssetIds = data.SavedAssetIds;
+            this.SeenAssetIds = data.SavedAssetIds.Clone();
             this.NotifyDownloadCountChanged();
 
             SaveTo = Path.Combine(Settings.Default.SavePath, Site.ToString().TrimStart('_'), BoardCode, Id.ToString());
@@ -71,7 +72,8 @@ namespace GChan.Models.Trackers.Sites
             var uploads = Array.Empty<Upload>();
             var thumbnails = Array.Empty<Thumbnail>();
 
-            var jObject = await GetThreadJson(cancellationToken);
+            bool forceDownload = FileCount > SeenAssetIds.Count(id => id.Type == AssetType.Upload);
+            var jObject = await GetThreadJson(cancellationToken, forceDownload);
 
             if (jObject == null)
             {
@@ -115,11 +117,11 @@ namespace GChan.Models.Trackers.Sites
         }
 
         /// <returns>Returns null if the thread was not modified since the last scrape.</returns>
-        private async Task<JObject?> GetThreadJson(CancellationToken cancellationToken)
+        private async Task<JObject?> GetThreadJson(CancellationToken cancellationToken, bool forceDownload)
         {
             var client = Utils.GetHttpClient();
             var jsonUrl = $"https://a.4cdn.org/{BoardCode}/thread/{Id}.json";
-            var json = await client.GetStringAsync(jsonUrl, LastScrape, cancellationToken);
+            var json = await client.GetStringAsync(jsonUrl, forceDownload ? null : LastScrape, cancellationToken);
 
             if (json == null)
             {
