@@ -68,6 +68,23 @@ namespace GChan.Models.Trackers
             }
         }
 
+        public int? DownloadCount
+        {
+            get => downloadCount;
+            set
+            {
+                downloadCount = value;
+                MainForm.StaticInvoke(() => NotifyPropertyChanged());
+            }
+        }
+
+        public void RefreshDownloadCount()
+        {
+            this.DownloadCount = SavedAssetIds
+                    .Where(id => id.Type == AssetType.Upload)
+                    .Count();
+        }
+
         public bool Gone { get; protected set; } = false;
 
         /// <summary>
@@ -75,6 +92,7 @@ namespace GChan.Models.Trackers
         /// </summary>
         internal string? subject { get; private set; } = null;
         private int? fileCount = null;
+        private int? downloadCount = null;
 
         private bool hasScraped => fileCount != null || subject != null;
 
@@ -107,7 +125,7 @@ namespace GChan.Models.Trackers
             }
 
             try
-            {
+            {                
                 // Should we be able to return more IDownloadables in DownloadResult to be added to the queue?
                 var results = await ScrapeThreadImpl(
                     Settings.Default.SaveHtml,
@@ -135,6 +153,7 @@ namespace GChan.Models.Trackers
                 FileCount = results.Uploads.Length;
                 SeenAssetIds.AddRange(newAssets);
                 Priority = ProcessPriority.Default; // Set priority to default. May have been set to "high" if thread was new.
+                this.RefreshDownloadCount();
 
                 return new(this, removeFromQueue: false, newProcessables: newAssets);
             }
