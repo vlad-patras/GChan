@@ -8,7 +8,6 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Net;
 using System.Net.Http;
 using System.Reflection;
 using System.Threading;
@@ -28,7 +27,7 @@ namespace GChan
         /// <summary>
         /// <see href="https://github.com/dotnet/runtime/issues/63383#issuecomment-1005371573"/>
         /// </summary>
-        public static readonly char[] IllegalSubjectCharacters = [..Path.GetInvalidPathChars(), ..Path.GetInvalidFileNameChars() '/', '\\'];
+        public static readonly char[] IllegalSubjectCharacters = [..Path.GetInvalidPathChars(), ..Path.GetInvalidFileNameChars(), '/', '\\'];
         public static readonly char[] IllegalFilenameCharacters = Path.GetInvalidFileNameChars();
 
         private static readonly ILogger logger = LogManager.GetCurrentClassLogger();

@@ -50,7 +50,8 @@ namespace GChan.Models.Trackers.Sites
             this.Id = data.Id;
             this.Subject = data.Subject;
             this.FileCount = data.FileCount;
-            this.SavedAssetIds = data.SavedAssetIds;
+            this.SavedAssetIds = data.SavedAssetIds.Clone();
+            this.SeenAssetIds = data.SavedAssetIds.Clone();
 
             SaveTo = Path.Combine(Settings.Default.SavePath, Site.ToString().TrimStart('_'), BoardCode, Id.ToString());
         }
