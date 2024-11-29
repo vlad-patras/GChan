@@ -255,7 +255,7 @@ namespace GChan.Models.Trackers.Sites
 
             var result = sub ?? (nameOk ? name : null) ?? (commentOk ? comment : null);
 
-            return Utils.SanitiseSubject(result);
+            return result == null ? null : Utils.SanitiseSubject(result);
         }
     }
 }

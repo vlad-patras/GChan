@@ -211,6 +211,7 @@ namespace GChan
         /// Remove a string of characters illegal for a folder name.<br/>
         /// Used for thread subjects if addThreadSubjectToFolder setting is enabled.
         /// </summary>
+        /// <exception cref="NullReferenceException">If <paramref name="subject"/> is null.</exception>
         public static string SanitiseSubject(string subject)
         {
             return RemoveCharactersFromString(subject, IllegalSubjectCharacters);
