@@ -46,12 +46,21 @@ namespace GChan.Models.Trackers.Sites
         {
             this.Site = Site._4chan;
             this.BoardCode = data.BoardCode;
-            this.LastScrape = data.LastScrape;
             this.Id = data.Id;
             this.Subject = data.Subject;
             this.FileCount = data.FileCount;
             this.SavedAssetIds = data.SavedAssetIds.Clone();
             this.SeenAssetIds = data.SavedAssetIds.Clone();
+
+            // Only populate LastScrape if it appears that all uploads have been saved.
+            // This will cause the next dequeue of this thread to be downloaded regardless of when the last scrape was and
+            // will remedy issue #2 mentioned by vlad-patras here: https://github.com/Issung/GChan/issues/49#issuecomment-2491144815 in which the
+            // application is closed & reopened, a thread remains unchanged before removal but had files undownloaded.
+            // TODO: This won't cover the case of some thumbnails not being saved.
+            if (FileCount == SavedAssetIds.Count(a => a.Type == AssetType.Upload))
+            {
+                this.LastScrape = data.LastScrape;
+            }
 
             SaveTo = Path.Combine(Settings.Default.SavePath, Site.ToString().TrimStart('_'), BoardCode, Id.ToString());
         }
