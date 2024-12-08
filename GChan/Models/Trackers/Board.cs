@@ -1,45 +1,25 @@
 ﻿using GChan.Data.Models;
+using GChan.Forms;
 using GChan.Properties;
 using GChan.Services;
 using System;
+using System.ComponentModel;
 using System.Linq;
 using System.Net;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace GChan.Models.Trackers
 {
-    // Should contain the subject too (which is available via the catalog API)
-    // so the thread doesn't have to do another request to fetch it.
-    // Image count is also present on the catalog API too.
-    public class BoardScrapeResult
+    public abstract class Board : Tracker, IProcessable, INotifyPropertyChanged
     {
-        public string Url { get; set; }
-        public long Id { get; set; }
-        public long FileCount { get; set; }
-        public string Subject { get; set; }
+        private int threadCount;
 
-        public BoardScrapeResult(string url, long id, long fileCount, string subject)
-        {
-            Url = url;
-            Id = id;
-            FileCount = fileCount;
-            Subject = subject;
-        }
-    }
+        public event PropertyChangedEventHandler PropertyChanged;
 
-    public abstract class Board : Tracker, IProcessable
-    {
-        protected int threadCount;
-
-        public int ThreadCount
-        {
-            get
-            {
-                return threadCount;
-            }
-        }
+        public int ThreadCount { get => threadCount; set { threadCount = value; NotifyPropertyChanged(); } }
 
         /// <summary>
         /// The greatest Thread ID added to tracking.<br/>
@@ -56,11 +36,20 @@ namespace GChan.Models.Trackers
         protected Board(string url) : base(url)
         {
             Type = Type.Board;
+            
         }
 
         protected Board(BoardData data) : base($"https://boards.4chan.org/{data.Code}/")
         {
             this.LastScrape = data.LastScrape;
+        }
+
+        public void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
+        {
+#if DEBUG
+            logger.Trace($"NotifyPropertyChanged! Board.{propertyName}.");
+#endif
+            MainForm.StaticInvoke(() => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName)));
         }
 
         public async Task<ProcessResult> ProcessAsync(ProcessableParams parameters, CancellationToken cancellationToken)
@@ -76,11 +65,14 @@ namespace GChan.Models.Trackers
                     return new(this, removeFromQueue: false, newProcessables: []);
                 }
 
-                threadCount = threads.Length;
+                ThreadCount = threads.Length;
 
-                var newThreads = threads.Where(t => t.Id > GreatestThreadId);
+                var newThreads = threads.Where(t => t.Id > GreatestThreadId).ToArray();
 
-                GreatestThreadId = newThreads.Max(t => t.Id);
+                if (newThreads.Any())
+                {
+                    GreatestThreadId = newThreads.Max(t => t.Id);
+                }
 
                 return new(this, removeFromQueue: false, newProcessables: newThreads);
             }

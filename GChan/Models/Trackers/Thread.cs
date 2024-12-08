@@ -94,7 +94,7 @@ namespace GChan.Models.Trackers
         public void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
         {
 #if DEBUG
-            logger.Trace($"NotifyPropertyChanged! propertyName: {propertyName}.");
+            logger.Trace($"NotifyPropertyChanged! Thread.{propertyName}.");
 #endif
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }

@@ -1,6 +1,6 @@
 ﻿using GChan.Controllers;
 using GChan.Data;
-using GChan.Models.Trackers;
+using GChan.Helpers.Extensions;
 using GChan.Properties;
 using GChan.ViewModels;
 using NLog;
@@ -23,9 +23,9 @@ namespace GChan.Forms
         /// <summary>
         /// Get the index of the selected row in the thread grid view.
         /// </summary>
-        private int ThreadGridViewSelectedRowIndex => threadGridView?.CurrentCell?.RowIndex ?? -1;
+        private int ThreadsGridSelectedRowIndex => threadGridView.SelectedRowIndex();
 
-        private int BoardsListBoxSelectedRowIndex { get { return boardsListBox.SelectedIndex; } set { boardsListBox.SelectedIndex = value; } }
+        private int BoardsGridSelectedRowIndex => boardsGridView.SelectedRowIndex();
 
         private static readonly ILogger logger = LogManager.GetCurrentClassLogger();
 
@@ -126,11 +126,11 @@ namespace GChan.Forms
 
         private async void deleteToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (ThreadGridViewSelectedRowIndex != -1)
+            if (ThreadsGridSelectedRowIndex != -1)
             {
                 try
                 {
-                    await Controller.RemoveThread(Model.Threads[ThreadGridViewSelectedRowIndex], true);
+                    await Controller.RemoveThread(Model.Threads[ThreadsGridSelectedRowIndex], true);
                 }
                 catch
                 {
@@ -141,9 +141,9 @@ namespace GChan.Forms
 
         private void openFolderToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (ThreadGridViewSelectedRowIndex != -1)
+            if (ThreadsGridSelectedRowIndex != -1)
             {
-                var path = Model.Threads[ThreadGridViewSelectedRowIndex].SaveTo;
+                var path = Model.Threads[ThreadsGridSelectedRowIndex].SaveTo;
 
                 if (!Directory.Exists(path))
                 {
@@ -156,18 +156,18 @@ namespace GChan.Forms
 
         private void openInBrowserToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (ThreadGridViewSelectedRowIndex != -1)
+            if (ThreadsGridSelectedRowIndex != -1)
             {
-                var url = Model.Threads[ThreadGridViewSelectedRowIndex].Url;
+                var url = Model.Threads[ThreadsGridSelectedRowIndex].Url;
                 Utils.OpenWebpage(url);
             }
         }
 
         private void copyURLToClipboardToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (ThreadGridViewSelectedRowIndex != -1)
+            if (ThreadsGridSelectedRowIndex != -1)
             {
-                string spath = Model.Threads[ThreadGridViewSelectedRowIndex].Url;
+                string spath = Model.Threads[ThreadsGridSelectedRowIndex].Url;
                 Clipboard.SetText(spath);
             }
         }
@@ -199,9 +199,9 @@ namespace GChan.Forms
 
         private void openBoardFolderToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (BoardsListBoxSelectedRowIndex != -1)
+            if (BoardsGridSelectedRowIndex != -1)
             {
-                var path = (Model.Boards[BoardsListBoxSelectedRowIndex]).SaveTo;
+                var path = Model.Boards[BoardsGridSelectedRowIndex].SaveTo;
 
                 if (!Directory.Exists(path))
                 {
@@ -214,18 +214,18 @@ namespace GChan.Forms
 
         private void openBoardURLToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (BoardsListBoxSelectedRowIndex != -1)
+            if (BoardsGridSelectedRowIndex != -1)
             {
-                var url = boardsListBox.Items[BoardsListBoxSelectedRowIndex].ToString();
+                var url = Model.Boards[BoardsGridSelectedRowIndex].Url;
                 Utils.OpenWebpage(url);
             }
         }
 
-        private void deleteBoardToolStripMenuItem_Click(object sender, EventArgs e)
+        private async void deleteBoardToolStripMenuItem_ClickAsync(object sender, EventArgs e)
         {
-            if (BoardsListBoxSelectedRowIndex != -1)
+            if (BoardsGridSelectedRowIndex != -1)
             {
-                Controller.RemoveBoard((Board)boardsListBox.SelectedItem);
+                await Controller.RemoveBoard(Model.Boards[BoardsGridSelectedRowIndex], true);
             }
         }
 
@@ -249,15 +249,13 @@ namespace GChan.Forms
             await Controller.ClearTrackers(listsTabControl.SelectedIndex == 0 ? Type.Thread : Type.Board);
         }
 
-        private void boardsListBox_MouseDoubleClick(object sender, MouseEventArgs e)
+        private void boardsGridView_MouseDoubleClick(object sender, MouseEventArgs e)
         {
-            int pos;
-
             if (e.Button == MouseButtons.Left)
             {
-                if ((pos = boardsListBox.IndexFromPoint(e.Location)) != -1)
+                if (BoardsGridSelectedRowIndex != -1)
                 {
-                    var path = Model.Boards[pos].SaveTo;
+                    var path = Model.Boards[BoardsGridSelectedRowIndex].SaveTo;
 
                     if (!Directory.Exists(path))
                     {
@@ -273,9 +271,9 @@ namespace GChan.Forms
         /// Left click: Allows user to deselect all rows by clicking white space.
         /// Right click: Select the clicked row (not normally done with right click). Is necessary for future events so we know which row to operate on (e.g. remove tracker).
         /// </summary>
-        private void threadGridView_MouseDown(object sender, MouseEventArgs e)
+        private void gridView_MouseDown(object sender, MouseEventArgs e)
         {
-            DataGridView.HitTestInfo hitInfo = threadGridView.HitTest(e.X, e.Y);
+            var hitInfo = threadGridView.HitTest(e.X, e.Y);
 
             if (e.Button == MouseButtons.Left)
             {
@@ -317,9 +315,9 @@ namespace GChan.Forms
 
         private void renameToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (ThreadGridViewSelectedRowIndex != -1)
+            if (ThreadsGridSelectedRowIndex != -1)
             {
-                Controller.RenameThreadSubjectPrompt(ThreadGridViewSelectedRowIndex);
+                Controller.RenameThreadSubjectPrompt(ThreadsGridSelectedRowIndex);
             }
         }
 

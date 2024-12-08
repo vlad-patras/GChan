@@ -30,6 +30,8 @@ namespace GChan.Forms
             components = new System.ComponentModel.Container();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             menuStrip = new System.Windows.Forms.MenuStrip();
             fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -66,12 +68,12 @@ namespace GChan.Forms
             deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             threadsBindingSource = new System.Windows.Forms.BindingSource(components);
             boardsTabPage = new System.Windows.Forms.TabPage();
-            boardsListBox = new System.Windows.Forms.ListBox();
+            boardsGridView = new Controls.PreferencesDataGridView();
+            boardsBindingSource = new System.Windows.Forms.BindingSource(components);
             boardsContextMenu = new System.Windows.Forms.ContextMenuStrip(components);
             boardsContextMenuOpenFolderButton = new System.Windows.Forms.ToolStripMenuItem();
             boardsContextMenuOpenInBrowserButton = new System.Windows.Forms.ToolStripMenuItem();
             boardsContextMenuRemoveButton = new System.Windows.Forms.ToolStripMenuItem();
-            boardsBindingSource = new System.Windows.Forms.BindingSource(components);
             addButton = new System.Windows.Forms.Button();
             urlTextBox = new System.Windows.Forms.TextBox();
             systemTrayNotifyIcon = new System.Windows.Forms.NotifyIcon(components);
@@ -83,6 +85,9 @@ namespace GChan.Forms
             clearAllButton = new System.Windows.Forms.Button();
             clipboardButton = new System.Windows.Forms.Button();
             toolTip = new System.Windows.Forms.ToolTip(components);
+            boardsGridViewSiteColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            boardsGridViewBoardColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            boardsGridViewThreadsColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             menuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)mainFormModelBindingSource).BeginInit();
             listsTabControl.SuspendLayout();
@@ -91,8 +96,9 @@ namespace GChan.Forms
             threadsContextMenu.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)threadsBindingSource).BeginInit();
             boardsTabPage.SuspendLayout();
-            boardsContextMenu.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)boardsGridView).BeginInit();
             ((System.ComponentModel.ISupportInitialize)boardsBindingSource).BeginInit();
+            boardsContextMenu.SuspendLayout();
             systemTrayContextMenu.SuspendLayout();
             SuspendLayout();
             // 
@@ -320,7 +326,7 @@ namespace GChan.Forms
             threadGridView.Size = new System.Drawing.Size(635, 222);
             threadGridView.TabIndex = 1;
             threadGridView.DataError += threadGridView_DataError;
-            threadGridView.MouseDown += threadGridView_MouseDown;
+            threadGridView.MouseDown += gridView_MouseDown;
             // 
             // threadGridSubjectColumn
             // 
@@ -423,7 +429,7 @@ namespace GChan.Forms
             // 
             // boardsTabPage
             // 
-            boardsTabPage.Controls.Add(boardsListBox);
+            boardsTabPage.Controls.Add(boardsGridView);
             boardsTabPage.Location = new System.Drawing.Point(4, 24);
             boardsTabPage.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             boardsTabPage.Name = "boardsTabPage";
@@ -433,20 +439,53 @@ namespace GChan.Forms
             boardsTabPage.Text = "Boards (0)";
             boardsTabPage.UseVisualStyleBackColor = true;
             // 
-            // boardsListBox
+            // boardsGridView
             // 
-            boardsListBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            boardsListBox.ContextMenuStrip = boardsContextMenu;
-            boardsListBox.DataSource = boardsBindingSource;
-            boardsListBox.Dock = System.Windows.Forms.DockStyle.Fill;
-            boardsListBox.FormattingEnabled = true;
-            boardsListBox.ItemHeight = 15;
-            boardsListBox.Location = new System.Drawing.Point(4, 3);
-            boardsListBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            boardsListBox.Name = "boardsListBox";
-            boardsListBox.Size = new System.Drawing.Size(635, 222);
-            boardsListBox.TabIndex = 1;
-            boardsListBox.MouseDoubleClick += boardsListBox_MouseDoubleClick;
+            boardsGridView.AllowUserToAddRows = false;
+            boardsGridView.AllowUserToDeleteRows = false;
+            boardsGridView.AllowUserToOrderColumns = true;
+            boardsGridView.AllowUserToResizeRows = false;
+            dataGridViewCellStyle3.BackColor = System.Drawing.Color.FromArgb(245, 245, 245);
+            dataGridViewCellStyle3.NullValue = " ";
+            boardsGridView.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle3;
+            boardsGridView.AutoGenerateColumns = false;
+            boardsGridView.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
+            boardsGridView.BackgroundColor = System.Drawing.Color.White;
+            boardsGridView.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            boardsGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            boardsGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] { boardsGridViewSiteColumn, boardsGridViewBoardColumn, boardsGridViewThreadsColumn });
+            boardsGridView.ContextMenuStrip = boardsContextMenu;
+            boardsGridView.DataSource = boardsBindingSource;
+            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, 0);
+            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle4.NullValue = " ";
+            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            boardsGridView.DefaultCellStyle = dataGridViewCellStyle4;
+            boardsGridView.Dock = System.Windows.Forms.DockStyle.Fill;
+            boardsGridView.GridColor = System.Drawing.SystemColors.Window;
+            boardsGridView.Location = new System.Drawing.Point(4, 3);
+            boardsGridView.Margin = new System.Windows.Forms.Padding(0);
+            boardsGridView.MultiSelect = false;
+            boardsGridView.Name = "boardsGridView";
+            boardsGridView.ReadOnly = true;
+            boardsGridView.RowHeadersVisible = false;
+            boardsGridView.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            boardsGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            boardsGridView.ShowCellErrors = false;
+            boardsGridView.ShowEditingIcon = false;
+            boardsGridView.ShowRowErrors = false;
+            boardsGridView.Size = new System.Drawing.Size(635, 222);
+            boardsGridView.TabIndex = 2;
+            boardsGridView.MouseDown += gridView_MouseDown;
+            // 
+            // boardsBindingSource
+            // 
+            boardsBindingSource.DataMember = "Boards";
+            boardsBindingSource.DataSource = mainFormModelBindingSource;
             // 
             // boardsContextMenu
             // 
@@ -480,12 +519,7 @@ namespace GChan.Forms
             boardsContextMenuRemoveButton.ShortcutKeys = System.Windows.Forms.Keys.Delete;
             boardsContextMenuRemoveButton.Size = new System.Drawing.Size(202, 22);
             boardsContextMenuRemoveButton.Text = "Remove";
-            boardsContextMenuRemoveButton.Click += deleteBoardToolStripMenuItem_Click;
-            // 
-            // boardsBindingSource
-            // 
-            boardsBindingSource.DataMember = "Boards";
-            boardsBindingSource.DataSource = mainFormModelBindingSource;
+            boardsContextMenuRemoveButton.Click += deleteBoardToolStripMenuItem_ClickAsync;
             // 
             // addButton
             // 
@@ -583,6 +617,27 @@ namespace GChan.Forms
             clipboardButton.UseVisualStyleBackColor = true;
             clipboardButton.Click += clipboardButton_Click;
             // 
+            // boardsGridViewSiteColumn
+            // 
+            boardsGridViewSiteColumn.DataPropertyName = "SiteDisplayName";
+            boardsGridViewSiteColumn.HeaderText = "Site";
+            boardsGridViewSiteColumn.Name = "boardsGridViewSiteColumn";
+            boardsGridViewSiteColumn.ReadOnly = true;
+            // 
+            // boardsGridViewBoardColumn
+            // 
+            boardsGridViewBoardColumn.DataPropertyName = "BoardCode";
+            boardsGridViewBoardColumn.HeaderText = "Board";
+            boardsGridViewBoardColumn.Name = "boardsGridViewBoardColumn";
+            boardsGridViewBoardColumn.ReadOnly = true;
+            // 
+            // boardsGridViewThreadsColumn
+            // 
+            boardsGridViewThreadsColumn.DataPropertyName = "ThreadCount";
+            boardsGridViewThreadsColumn.HeaderText = "Threads";
+            boardsGridViewThreadsColumn.Name = "boardsGridViewThreadsColumn";
+            boardsGridViewThreadsColumn.ReadOnly = true;
+            // 
             // MainForm
             // 
             AcceptButton = addButton;
@@ -616,8 +671,9 @@ namespace GChan.Forms
             threadsContextMenu.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)threadsBindingSource).EndInit();
             boardsTabPage.ResumeLayout(false);
-            boardsContextMenu.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)boardsGridView).EndInit();
             ((System.ComponentModel.ISupportInitialize)boardsBindingSource).EndInit();
+            boardsContextMenu.ResumeLayout(false);
             systemTrayContextMenu.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
@@ -626,7 +682,6 @@ namespace GChan.Forms
         #endregion
         private System.Windows.Forms.TabControl listsTabControl;
         private System.Windows.Forms.Button addButton;
-        private System.Windows.Forms.ListBox boardsListBox;
         private System.Windows.Forms.ContextMenuStrip threadsContextMenu;
         private System.Windows.Forms.ToolStripMenuItem openFolderToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem openInBrowserToolStripMenuItem;
@@ -681,6 +736,10 @@ namespace GChan.Forms
         private System.Windows.Forms.ToolStripMenuItem resumeDownloadsToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem resumeDownloadsToolStripMenuItem2;
         private System.Windows.Forms.ToolStripMenuItem pauseDownloadsToolStripMenuItem1;
+        internal Controls.PreferencesDataGridView boardsGridView;
+        private System.Windows.Forms.DataGridViewTextBoxColumn boardsGridViewSiteColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn boardsGridViewBoardColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn boardsGridViewThreadsColumn;
     }
 }
 

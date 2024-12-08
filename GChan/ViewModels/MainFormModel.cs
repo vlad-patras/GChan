@@ -1,7 +1,6 @@
 ﻿using GChan.Controls;
 using GChan.Forms;
 using GChan.Models.Trackers;
-using GChan.Properties;
 using GChan.Services;
 using NLog;
 using System.ComponentModel;
@@ -34,7 +33,7 @@ namespace GChan.ViewModels
         public void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
         {
 #if DEBUG
-            logger.Trace($"NotifyPropertyChanged! propertyName: {propertyName}.");
+            logger.Trace($"NotifyPropertyChanged! MainFormModel.{propertyName}.");
 #endif
 
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
@@ -62,12 +61,15 @@ namespace GChan.ViewModels
 
         private void Threads_ListChanged(object sender, ListChangedEventArgs e)
         {
+            // Binding the TagPage's text to this text is easily doable, but it causes weird refresh behaviour which makes scrolling on the 
+            // grid view a terrible experience, causing it to constantly scroll back to where you were. So setting the text manually resolves this.
             form.threadsTabPage.Text = ThreadsTabText;
         }
 
         private void Boards_ListChanged(object sender, ListChangedEventArgs e)
         {
             NotifyPropertyChanged(nameof(Boards));
+            // We set the text manually instead of using data binding to avoid weird refresh scroll issues, read comment above for threads tabpage.
             form.boardsTabPage.Text = BoardsTabText;
         }
 

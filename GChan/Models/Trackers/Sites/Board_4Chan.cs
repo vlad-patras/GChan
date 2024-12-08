@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using GChan.Data.Models;
 using GChan.Helpers.Extensions;
 using System.Threading;
+using System.IO;
+using GChan.Properties;
 
 namespace GChan.Models.Trackers.Sites
 {
@@ -15,17 +17,19 @@ namespace GChan.Models.Trackers.Sites
 
         public Board_4Chan(string url) : base(url)
         {
-            Site = Site._4chan;
+            this.Site = Site._4chan;
 
             var boardCodeMatch = Regex.Match(url, BOARD_CODE_REGEX);
-            BoardCode = boardCodeMatch.Groups[0].Value;
+            this.BoardCode = boardCodeMatch.Groups[0].Value;
+            this.SaveTo = Path.Combine(Settings.Default.SavePath, SiteDisplayName, BoardCode);
         }
 
         public Board_4Chan(BoardData data) : base(data)
         {
-            Site = Site._4chan;
+            this.Site = Site._4chan;
             this.BoardCode = data.Code;
             this.GreatestThreadId = data.GreatestThreadId;
+            this.SaveTo = Path.Combine(Settings.Default.SavePath, SiteDisplayName, BoardCode);
         }
 
         public static bool UrlIsBoard(string url)
