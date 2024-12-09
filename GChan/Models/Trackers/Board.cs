@@ -17,7 +17,20 @@ namespace GChan.Models.Trackers
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int ThreadCount { get => threadCount; set { threadCount = value; NotifyPropertyChanged(); } }
+        public int ThreadCount 
+        {
+            get => threadCount; 
+            set
+            {
+                var update = threadCount != value;
+                threadCount = value;
+
+                if (update)
+                {
+                    NotifyPropertyChanged();
+                }
+            }
+        }
 
         /// <summary>
         /// The greatest Thread ID added to tracking.<br/>

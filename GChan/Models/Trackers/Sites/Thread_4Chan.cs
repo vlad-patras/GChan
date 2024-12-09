@@ -91,7 +91,7 @@ namespace GChan.Models.Trackers.Sites
             if (subject == null)
             {
                 var newSubject = ExtractSubject(jObject);
-                MainForm.StaticInvoke(() => Subject = newSubject);
+                Subject = newSubject;
             }
             uploads = ScrapeUploads(jObject);
 

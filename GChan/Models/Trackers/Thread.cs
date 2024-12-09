@@ -1,12 +1,10 @@
 ﻿using GChan.Forms;
-using GChan.Helpers.Extensions;
 using GChan.Properties;
 using GChan.Services;
 using System;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
-using System.Net.Http;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using CancellationToken = System.Threading.CancellationToken;
@@ -48,8 +46,13 @@ namespace GChan.Models.Trackers
             get => hasScraped ? subject ?? NO_SUBJECT : "Loading...";
             set
             {
+                var update = subject != value;
                 subject = value;
-                NotifyPropertyChanged();
+
+                if (update)
+                {
+                    MainForm.StaticInvoke(() => NotifyPropertyChanged());
+                }
             }
         }
 
@@ -63,8 +66,13 @@ namespace GChan.Models.Trackers
             get => fileCount;
             set
             {
+                var update = fileCount != value;
                 fileCount = value;
-                MainForm.StaticInvoke(() => NotifyPropertyChanged());
+
+                if (update)
+                {
+                    MainForm.StaticInvoke(() => NotifyPropertyChanged());
+                }
             }
         }
 
