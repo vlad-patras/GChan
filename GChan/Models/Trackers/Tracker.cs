@@ -3,12 +3,13 @@ using NLog;
 using System;
 using System.Net;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace GChan.Models.Trackers
 {
     public enum Type { Board, Thread };
 
-    public abstract class Tracker
+    public abstract class Tracker : IAsyncDisposable
     {
         /// <summary>
         /// Response status codes that indicate content is no longer available.
@@ -76,6 +77,12 @@ namespace GChan.Models.Trackers
         public void Cancel()
         {
             cancellationTokenSource.Cancel();
+        }
+
+        public ValueTask DisposeAsync()
+        {
+            cancellationTokenSource.Dispose();
+            return default;
         }
     }
 }

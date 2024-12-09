@@ -164,10 +164,6 @@ namespace GChan.Models.Trackers
             return $"Thread {{ {Site}.{Id} }}";
         }
 
-        public ValueTask DisposeAsync()
-        {
-            cancellationTokenSource.Dispose();
-            return default;
-        }
+        new public ValueTask DisposeAsync() => base.DisposeAsync();
     }
 }
