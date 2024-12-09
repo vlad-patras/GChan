@@ -22,11 +22,6 @@ namespace GChan.Services
     public class ProcessResult
     {
         /// <summary>
-        /// The processable this result comes from.
-        /// </summary>
-        public IProcessable Processable { get; }
-
-        /// <summary>
         /// Should this processable be removed from the queue.
         /// </summary>
         public bool RemoveFromQueue { get; }
@@ -37,12 +32,10 @@ namespace GChan.Services
         public IEnumerable<IProcessable> NewProcessables { get; }
 
         public ProcessResult(
-            IProcessable processable,
             bool removeFromQueue,
             IEnumerable<IProcessable> newProcessables = null
         )
         {
-            Processable = processable;
             RemoveFromQueue = removeFromQueue;
             NewProcessables = newProcessables ?? [];
         }

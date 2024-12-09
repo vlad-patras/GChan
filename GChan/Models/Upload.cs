@@ -85,37 +85,19 @@ namespace GChan.Models
         {
             if (!ShouldProcess)
             {
-                return new(this, removeFromQueue: true);
+                return new(removeFromQueue: true);
             }
 
             Directory.CreateDirectory(Thread.SaveTo);
             var path = Utils.CombinePathAndFilename(Thread.SaveTo, Filename);
 
-            try
-            {
-                var client = Utils.GetHttpClient();
-                var fileBytes = await client.GetByteArrayAsync(Url, cancellationToken);
-                await Utils.WriteFileBytesAsync(path, fileBytes, cancellationToken);
+            var client = Utils.GetHttpClient();
+            var fileBytes = await client.GetByteArrayAsync(Url, cancellationToken);
+            await Utils.WriteFileBytesAsync(path, fileBytes, cancellationToken);
 
-                Thread.SavedAssetIds.Add(Id);
-            }
-            catch (OperationCanceledException)
-            {
-                logger.Debug("Cancelling download for {upload}.", this);
-                return new(this, removeFromQueue: true);
-            }
-            catch (HttpRequestException e) when (e.IsGone())
-            {
-                logger.Debug("Downloading {upload} resulted in {status_code}", this, e.StatusCode);
-                return new(this, removeFromQueue: true);  // Thread is gone, don't retry.
-            }
-            catch (Exception ex)
-            {
-                logger.Error(ex, "An error occured downloading an image.");
-                return new(this, removeFromQueue: false);   // Unknown error, retry.
-            }
+            Thread.SavedAssetIds.Add(Id);
 
-            return new(this, removeFromQueue: true);
+            return new(removeFromQueue: true);
         }
 
         private string GenerateFilename(ImageFileNameFormat format)

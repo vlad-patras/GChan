@@ -103,62 +103,43 @@ namespace GChan.Models.Trackers
         {
             if (!ShouldProcess)
             {
-                return new(this, removeFromQueue: true);
+                return new(removeFromQueue: true);
             }
 
-            try
+            // Should we be able to return more IDownloadables in DownloadResult to be added to the queue?
+            var results = await ScrapeThreadImpl(
+                Settings.Default.SaveHtml,
+                Settings.Default.SaveThumbnails,
+                cancellationToken
+            );
+
+            LastScrape = DateTimeOffset.Now;
+
+            if (results == null)
             {
-                // Should we be able to return more IDownloadables in DownloadResult to be added to the queue?
-                var results = await ScrapeThreadImpl(
-                    Settings.Default.SaveHtml,
-                    Settings.Default.SaveThumbnails,
-                    cancellationToken
-                );
-
-                LastScrape = DateTimeOffset.Now;
-
-                if (results == null)
-                {
-                    return new(this, removeFromQueue: false);
-                }
-
-                if (!string.IsNullOrWhiteSpace(results.ThreadHtml))
-                {
-                    Directory.CreateDirectory(SaveTo);
-                    var path = Path.Combine(SaveTo, "Thread.html");
-                    await Utils.WriteAllTextAsync(path, results.ThreadHtml, cancellationToken);
-                }
-
-                var assets = results.Uploads.Concat<IAsset>(results.Thumbnails).ToArray();
-                var newAssets = assets.Where(a => !SeenAssetIds.Contains(a.Id)).ToArray();
-
-                FileCount = results.Uploads.Length;
-                SeenAssetIds.AddRange(newAssets);
-                Priority = ProcessPriority.Default; // Set priority to default. May have been set to "high" if thread was new.
-
-                return new(this, removeFromQueue: false, newProcessables: newAssets);
+                return new(removeFromQueue: false);
             }
-            catch (OperationCanceledException)
+
+            if (!string.IsNullOrWhiteSpace(results.ThreadHtml))
             {
-                logger.Debug("Cancelling download for {thread}.", this);
-                return new(this, removeFromQueue: true);
+                Directory.CreateDirectory(SaveTo);
+                var path = Path.Combine(SaveTo, "Thread.html");
+                await Utils.WriteAllTextAsync(path, results.ThreadHtml, cancellationToken);
             }
-            catch (HttpRequestException e) when (e.IsGone())
-            {
-                Gone = true;
-                await parameters.Hooks.ThreadRemoveSelf(this);
-                return new(this, removeFromQueue: true);
-            }
-            catch (Exception ex)
-            {
-                logger.Error(ex);
-                return new(this, removeFromQueue: false);
-            }
+
+            var assets = results.Uploads.Concat<IAsset>(results.Thumbnails).ToArray();
+            var newAssets = assets.Where(a => !SeenAssetIds.Contains(a.Id)).ToArray();
+
+            FileCount = results.Uploads.Length;
+            SeenAssetIds.AddRange(newAssets);
+            Priority = ProcessPriority.Default; // Set priority to default. May have been set to "high" if thread was new.
+
+            return new(removeFromQueue: false, newProcessables: newAssets);
         }
 
         /// <summary>
         /// Website specific implementation for scraping a thread, returning html, uploads and thumbnail assets.<br/>
-        /// Can return null to indicate the thread has had no change.
+        /// Can return null to indicate the thread has had no change sice <see cref="Tracker.LastScrape"/>.
         /// </summary>
         protected abstract Task<ThreadScrapeResults> ScrapeThreadImpl(
             bool saveHtml,

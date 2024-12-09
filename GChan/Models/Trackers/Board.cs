@@ -5,11 +5,9 @@ using GChan.Services;
 using System;
 using System.ComponentModel;
 using System.Linq;
-using System.Net;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows.Forms;
 
 namespace GChan.Models.Trackers
 {
@@ -54,38 +52,25 @@ namespace GChan.Models.Trackers
 
         public async Task<ProcessResult> ProcessAsync(ProcessableParams parameters, CancellationToken cancellationToken)
         {
-            try
+            var threads = await GetThreadsImpl(cancellationToken);
+
+            LastScrape = DateTimeOffset.Now;
+
+            if (threads == null)
             {
-                var threads = await GetThreadsImpl(cancellationToken);
-
-                LastScrape = DateTimeOffset.Now;
-
-                if (threads == null)
-                {
-                    return new(this, removeFromQueue: false, newProcessables: []);
-                }
-
-                ThreadCount = threads.Length;
-
-                var newThreads = threads.Where(t => t.Id > GreatestThreadId).ToArray();
-
-                if (newThreads.Any())
-                {
-                    GreatestThreadId = newThreads.Max(t => t.Id);
-                }
-
-                return new(this, removeFromQueue: false, newProcessables: newThreads);
-            }
-            catch (WebException webEx)
-            {
-                logger.Error(webEx, "Error occured attempting to get thread links.");
-
-#if DEBUG
-                MessageBox.Show("Connection Error: " + webEx.Message);
-#endif
+                return new(removeFromQueue: false);
             }
 
-            return new(this, removeFromQueue: false);
+            ThreadCount = threads.Length;
+
+            var newThreads = threads.Where(t => t.Id > GreatestThreadId).ToArray();
+
+            if (newThreads.Any())
+            {
+                GreatestThreadId = newThreads.Max(t => t.Id);
+            }
+
+            return new(removeFromQueue: false, newProcessables: newThreads);
         }
 
         /// <summary>
@@ -98,9 +83,6 @@ namespace GChan.Models.Trackers
             return $"{SiteDisplayName} - /{BoardCode}/ - ({ThreadCount} Threads)";
         }
 
-        public ValueTask DisposeAsync()
-        {
-            throw new System.NotImplementedException();
-        }
+        new public ValueTask DisposeAsync() => base.DisposeAsync();
     }
 }

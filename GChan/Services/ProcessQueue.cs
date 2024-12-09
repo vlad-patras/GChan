@@ -1,10 +1,12 @@
-﻿using GChan.Models;
+﻿using GChan.Helpers.Extensions;
+using GChan.Models;
 using GChan.Models.Trackers;
 using GChan.Properties;
 using Nito.AsyncEx;
 using NLog;
 using System;
 using System.Collections.Generic;
+using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -23,7 +25,7 @@ namespace GChan.Services
         private readonly ConcurrentDistinctQueue<IProcessable> lowPriorityQueue = new(LockRecursionPolicy.SupportsRecursion);
         private readonly AsyncManualResetEvent trackerAddedSignal = new();
         private readonly AsyncManualResetEvent resumeSignal = new();
-        private readonly TaskPool<ProcessResult> pool;
+        private readonly ProcessPool pool;
         private readonly Task task;
         private bool pause;
 
@@ -100,7 +102,7 @@ namespace GChan.Services
 
                     logger.Debug("Adding processable to process pool: {processable}.", item);
                     
-                    pool.Enqueue(async () => await item.ProcessAsync(processableParams, combinedToken));
+                    pool.Enqueue(new(item, processableParams, combinedToken));
                 }
 
                 if (item == null)
@@ -134,26 +136,53 @@ namespace GChan.Services
             return processable;
         }
 
-        private void HandleResult(ProcessResult result)
+        private async void HandleResult(IProcessable processable, Task<ProcessResult> completedTask)
         {
-            if (!result.RemoveFromQueue)
+            try
             {
-                Enqueue(result.Processable);
+                // The task is already completed, but await it to get the result, or if it is faulted, perform typical exception handling below.
+                var result = await completedTask;
 
-                logger.Debug("Requeuing processable: {processable}.", result.Processable);
+                if (!result.RemoveFromQueue)
+                {
+                    Enqueue(processable);
+
+                    logger.Debug("Requeuing processable: {processable}.", processable);
+                }
+
+                foreach (var newProcessable in result.NewProcessables)
+                {
+                    // Board may return new threads as processables.
+                    if (newProcessable is Tracker tracker)
+                    {
+                        addTrackerCallback(tracker);    // The callback will enqueue the tracker.
+                    }
+                    else
+                    {
+                        Enqueue(newProcessable);
+                    }
+                }
             }
-            
-            foreach (var newProcessable in result.NewProcessables)
+            catch (OperationCanceledException)
             {
-                // Board may return new threads as processables.
-                if (newProcessable is Tracker tracker)
-                {
-                    addTrackerCallback(tracker);    // The callback will enqueue the tracker.
-                }
-                else
-                {
-                    Enqueue(newProcessable);
-                }
+                // The item is already out of the queue, do nothing here to discard it.
+                logger.Debug("Cancelling download for {processable}.", processable);
+            }
+            catch (HttpRequestException e) when (e.IsGone())
+            {
+                // The item is already out of the queue, do nothing here to discard it.
+                logger.Debug("Processing {processable} resulted in gone status code {status_code}.", this, e.StatusCode);
+            }
+            // TODO: Handle rate limiting, Cloudflare should return a 429 and maybe have a Retry-After header. If it doesn't then default to a 1 minute delay.
+            //catch (...)
+            //{
+            //
+            //}
+            catch (Exception e)
+            {
+                // Error we don't have handling for, add back into queue.
+                logger.Error(e, "Requeuing faulted processable with unhandled error {processable}.", processable);
+                Enqueue(processable);
             }
         }
 
