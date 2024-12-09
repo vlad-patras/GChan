@@ -57,7 +57,7 @@ namespace GChan.Models.Trackers.Sites
                     var id = thread["no"].Value<long>();
                     var url = "https://boards.4chan.org/" + BoardCode + "/thread/" + id;
                     var subject = thread["sub"]?.Value<string>() ?? Thread.NO_SUBJECT;
-                    var fileCount = thread["images"].Value<int>();
+                    var fileCount = thread["images"].Value<int>() + 1;  // Add 1 to the file count because all threads must start with an image, catalog excludes this.
 
                     return new Thread_4Chan(url, subject, fileCount);
                 })
