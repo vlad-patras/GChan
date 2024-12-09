@@ -70,7 +70,7 @@ namespace GChan.Services
             this.task = Task.Factory.StartNew(WorkAsync, TaskCreationOptions.LongRunning);
         }
 
-        public void Enqueue(IProcessable processable)
+        public void Enqueue(IProcessable processable, bool requeue = false)
         {
             var wasQueued = processable.Priority switch
             {
@@ -79,6 +79,15 @@ namespace GChan.Services
                 ProcessPriority.Low => lowPriorityQueue.Enqueue(processable),
                 _ => throw new InvalidOperationException($"Unknown process priority {processable.Priority}.")
             };
+
+            if (wasQueued)
+            {
+                if (logger.IsTraceEnabled)  // Check log level is enabled to avoid unnecessary string concatenation.
+                {
+                    var operation = requeue ? "Requeued" : "Enqueued";
+                    logger.Trace($"{operation} processable {{processable}} with priority {{priority}}.", processable, processable.Priority);
+                }
+            }
 
             trackerAddedSignal.Set();
         }
@@ -181,8 +190,8 @@ namespace GChan.Services
             catch (Exception e)
             {
                 // Error we don't have handling for, add back into queue.
-                logger.Error(e, "Requeuing faulted processable with unhandled error {processable}.", processable);
-                Enqueue(processable);
+                logger.Error(e, "Processable failed with unhandled error {processable}.", processable);
+                Enqueue(processable, requeue: true);
             }
         }
 
