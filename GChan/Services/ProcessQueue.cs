@@ -152,13 +152,6 @@ namespace GChan.Services
                 // The task is already completed, but await it to get the result, or if it is faulted, perform typical exception handling below.
                 var result = await completedTask;
 
-                if (!result.RemoveFromQueue)
-                {
-                    Enqueue(processable);
-
-                    logger.Debug("Requeuing processable: {processable}.", processable);
-                }
-
                 foreach (var newProcessable in result.NewProcessables)
                 {
                     // Board may return new threads as processables.
@@ -170,6 +163,11 @@ namespace GChan.Services
                     {
                         Enqueue(newProcessable);
                     }
+                }
+
+                if (!result.RemoveFromQueue)
+                {
+                    Enqueue(processable, requeue: true);
                 }
             }
             catch (OperationCanceledException)
