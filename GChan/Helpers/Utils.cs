@@ -133,7 +133,7 @@ namespace GChan
 
         private static HttpClient CreateHttpClient()
         {
-            var handler = new HttpErrorExceptionThrower()
+            var handler = new HttpErrorStatusExceptionHandler()
             {
                 InnerHandler = new HttpClientHandler(),
             };

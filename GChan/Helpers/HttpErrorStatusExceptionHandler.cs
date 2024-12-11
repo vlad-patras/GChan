@@ -1,5 +1,6 @@
 ﻿using GChan.Exceptions;
 using System;
+using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -13,7 +14,7 @@ namespace GChan.Helpers;
 /// <item><see cref="HttpRequestException"/> is thrown for all other status codes, via <see cref="HttpResponseMessage.EnsureSuccessStatusCode"/></item>
 /// </list>
 /// </summary>
-public class HttpErrorExceptionThrower : DelegatingHandler
+public class HttpErrorStatusExceptionHandler : DelegatingHandler
 {
     protected override HttpResponseMessage Send(HttpRequestMessage request, CancellationToken cancellationToken)
     {
@@ -24,12 +25,17 @@ public class HttpErrorExceptionThrower : DelegatingHandler
     {
         var response = await base.SendAsync(request, cancellationToken);
 
-        if (response.StatusCode == System.Net.HttpStatusCode.TooManyRequests)
+        // Special exception for 429 status code.
+        if (response.StatusCode == HttpStatusCode.TooManyRequests)
         {
             throw new TooManyRequestsException(response);
         }
 
-        response.EnsureSuccessStatusCode();
+        // Allow 304 status code to go through.
+        if (response.StatusCode != HttpStatusCode.NotModified)
+        {
+            response.EnsureSuccessStatusCode();
+        }
 
         return response;
     }
