@@ -1,8 +1,6 @@
 ﻿using System;
-using System.IO;
 using System.Net;
 using System.Net.Http;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -37,20 +35,7 @@ namespace GChan.Helpers.Extensions
                 return null;
             }
 
-            response.EnsureSuccessStatusCode();
-
             return await response.Content.ReadAsStringAsync(cancellationToken);
-        }
-
-        /// <summary>
-        /// Synchronous implementation for use in hacky network request within thread constructor.
-        /// </summary>
-        public static string ReadAsString(this HttpResponseMessage response)
-        {
-            using var stream = response.Content.ReadAsStream();
-            using var reader = new StreamReader(stream, Encoding.UTF8);
-
-            return reader.ReadToEnd();
         }
     }
 }

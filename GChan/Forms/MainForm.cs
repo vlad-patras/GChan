@@ -96,7 +96,7 @@ namespace GChan.Forms
                 text = Clipboard.GetText();
             }
 
-            var urls = text.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Select(Utils.PrepareURL);
+            var urls = text.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Select(Utils.PrepareUrl);
             Controller.AddUrls(urls);
         }
 
@@ -105,7 +105,7 @@ namespace GChan.Forms
             var textData = (string)e.Data.GetData(DataFormats.Text);
 
             // Get url from TextBox
-            var urls = textData.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Select(Utils.PrepareURL);
+            var urls = textData.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Select(Utils.PrepareUrl);
             Controller.AddUrls(urls);
         }
 

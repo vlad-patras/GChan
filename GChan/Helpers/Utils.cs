@@ -1,5 +1,6 @@
 ﻿using GChan.Data;
 using GChan.Data.Models;
+using GChan.Helpers;
 using GChan.Models.Trackers;
 using GChan.Models.Trackers.Sites;
 using GChan.Properties;
@@ -117,23 +118,31 @@ namespace GChan
         /// eg "4chan.org/gif/thread/16245377#p16245377" becomes "4chan.org/gif/thread/16245377".
         /// (hashtag and any following characters are trimmed).
         /// </summary>
-        public static string PrepareURL(string url)
+        public static string PrepareUrl(string url)
         {
             url = url.Trim();
 
             int indexOfHash = url.IndexOf('#');
             if (indexOfHash > 0)
+            {
                 url = url.Substring(0, indexOfHash);
+            }
 
             return url;
         }
 
         private static HttpClient CreateHttpClient()
         {
-            var client = new HttpClient();
+            var handler = new HttpErrorExceptionThrower()
+            {
+                InnerHandler = new HttpClientHandler(),
+            };
+
+            var client = new HttpClient(handler);
+
             client.DefaultRequestHeaders.UserAgent.Clear();
             client.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent", Settings.Default.UserAgent);
-            //client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue(Settings.Default.UserAgent, string.Empty));
+
             return client;
         }
 

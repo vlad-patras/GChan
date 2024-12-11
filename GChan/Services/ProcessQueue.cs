@@ -1,4 +1,5 @@
-﻿using GChan.Helpers.Extensions;
+﻿using GChan.Exceptions;
+using GChan.Helpers.Extensions;
 using GChan.Models;
 using GChan.Models.Trackers;
 using GChan.Properties;
@@ -19,6 +20,7 @@ namespace GChan.Services
     /// </summary>
     public class ProcessQueue
     {
+
         private static readonly ILogger logger = LogManager.GetCurrentClassLogger();
         private readonly ConcurrentDistinctQueue<IProcessable> highPriorityQueue = new(LockRecursionPolicy.SupportsRecursion);
         private readonly ConcurrentDistinctQueue<IProcessable> defaultPriorityQueue = new(LockRecursionPolicy.SupportsRecursion);
@@ -27,11 +29,13 @@ namespace GChan.Services
         private readonly AsyncManualResetEvent resumeSignal = new();
         private readonly ProcessPool pool;
         private readonly Task task;
-        private bool pause;
 
         private readonly Action<Tracker> addTrackerCallback;
         private readonly CancellationToken shutdownCancellationToken;
         private readonly ProcessableParams processableParams;
+
+        private bool pause;
+        private TimeSpan? tooManyRequestsDelay;
 
         public event Action? PausedPropertyChanged;
 
@@ -101,6 +105,21 @@ namespace GChan.Services
                     // If paused wait on the resume signal until it is set.
                     await resumeSignal.WaitAsync();
                     resumeSignal.Reset();   // Reset it in case pause is used again later.
+                }
+
+                if (tooManyRequestsDelay.HasValue)
+                {
+                    // Wait for processing pool to empty.
+                    while (!pool.Empty)
+                    {
+                        await Task.Delay(TimeSpan.FromSeconds(1));
+                    }
+
+                    // Wait for the delay specified by the 
+                    await Task.Delay(tooManyRequestsDelay.Value + TimeSpan.FromSeconds(1));
+
+                    // Set delay back to null, continue the routine until it is encountered again.
+                    tooManyRequestsDelay = null;
                 }
 
                 var item = MaybeDequeue();
@@ -180,11 +199,14 @@ namespace GChan.Services
                 // The item is already out of the queue, do nothing here to discard it.
                 logger.Debug("Processing {processable} resulted in gone status code {status_code}.", this, e.StatusCode);
             }
-            // TODO: Handle rate limiting, Cloudflare should return a 429 and maybe have a Retry-After header. If it doesn't then default to a 1 minute delay.
-            //catch (...)
-            //{
-            //
-            //}
+            catch (TooManyRequestsException e)
+            {
+                var delay = e.RetryAfter ?? TimeSpan.FromMinutes(1);
+                logger.Warn("Got 429 (Too Many Requests) response while downloading. Backing off for approx {delay}.", delay);
+
+                // We got rate limited, the processable may still be able to succeed, requeue it.
+                Enqueue(processable, requeue: true);
+            }
             catch (Exception e)
             {
                 // Error we don't have handling for, add back into queue.

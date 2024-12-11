@@ -9,13 +9,11 @@ using NLog;
 using Onova.Models;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using SysThread = System.Threading.Thread;
 using Thread = GChan.Models.Trackers.Thread;
 using Type = GChan.Models.Trackers.Type;
 

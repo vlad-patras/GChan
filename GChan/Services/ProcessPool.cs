@@ -29,6 +29,16 @@ namespace GChan.Services
         public bool Full => runningTasks.Count >= MaxConcurrentTasks;
 
         /// <summary>
+        /// Are any tasks currently running.
+        /// </summary>
+        public bool Processing => runningTasks.Count > 0;
+
+        /// <summary>
+        /// Are there no running tasks and no waiting tasks.
+        /// </summary>
+        public bool Empty => runningTasks.Count == 0 && queue.IsEmpty;
+
+        /// <summary>
         /// For mapping failed tasks back to the processable.<br/>
         /// Using ConditionalWeakTable because it uses weak references on the tasks, and will not require us to cleanup.
         /// </summary>
@@ -65,16 +75,20 @@ namespace GChan.Services
                 if (runningTasks.Count > 0)
                 {
                     var firstCompletedTask = await Task.WhenAny(runningTasks);
-                    runningTasks.Remove(firstCompletedTask);
 
-                    // If the task throws an exception we don't know what it was, leading to it essentially being lost.
-                    if (taskToProcessableMap.TryGetValue(firstCompletedTask, out var processable))
+                    try
                     {
+                        // If the task throws an exception we don't know what it was, leading to it essentially being lost.
+                        var processable = taskToProcessableMap.GetValue(firstCompletedTask, createValueCallback: _ => throw new Exception($"Value not present for task id {firstCompletedTask.Id}."));
                         completionListener(processable, firstCompletedTask);
                     }
-                    else
+                    catch (Exception e)
                     {
-                        logger.Error(firstCompletedTask.Exception, "Was unable to determine a processable for a failed task in the task pool.");
+                        logger.Error(e, "An error occured while trying to notify process queue of process completion.");
+                    }
+                    finally
+                    {
+                        runningTasks.Remove(firstCompletedTask);
                     }
                 }
                 else

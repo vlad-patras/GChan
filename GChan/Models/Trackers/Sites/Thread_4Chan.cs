@@ -1,6 +1,5 @@
 ﻿using GChan.Data;
 using GChan.Data.Models;
-using GChan.Forms;
 using GChan.Helpers.Extensions;
 using GChan.Properties;
 using GChan.Services;
