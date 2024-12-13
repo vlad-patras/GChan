@@ -60,6 +60,7 @@ namespace GChan.Forms
             threadGridBoardCodeColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             Id = new System.Windows.Forms.DataGridViewTextBoxColumn();
             threadGridFileCountColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            threadGridPendingCountColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             threadsContextMenu = new System.Windows.Forms.ContextMenuStrip(components);
             openFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             openInBrowserToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -298,7 +299,7 @@ namespace GChan.Forms
             threadGridView.BackgroundColor = System.Drawing.Color.White;
             threadGridView.BorderStyle = System.Windows.Forms.BorderStyle.None;
             threadGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            threadGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] { threadGridSubjectColumn, threadGridSiteColumn, threadGridBoardCodeColumn, Id, threadGridFileCountColumn });
+            threadGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] { threadGridSubjectColumn, threadGridSiteColumn, threadGridBoardCodeColumn, Id, threadGridFileCountColumn, threadGridPendingCountColumn });
             threadGridView.ContextMenuStrip = threadsContextMenu;
             threadGridView.DataSource = threadsBindingSource;
             dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
@@ -364,10 +365,18 @@ namespace GChan.Forms
             // threadGridFileCountColumn
             // 
             threadGridFileCountColumn.DataPropertyName = "FileCount";
-            threadGridFileCountColumn.FillWeight = 8.387236F;
+            threadGridFileCountColumn.FillWeight = 10F;
             threadGridFileCountColumn.HeaderText = "File Count";
             threadGridFileCountColumn.Name = "threadGridFileCountColumn";
             threadGridFileCountColumn.ReadOnly = true;
+            //
+            // threadGridPendingCountColumn
+            //
+            threadGridPendingCountColumn.DataPropertyName = "PendingCount";
+            threadGridPendingCountColumn.FillWeight = 9F;
+            threadGridPendingCountColumn.HeaderText = "Pending";
+            threadGridPendingCountColumn.Name = "threadGridPendingCountColumn";
+            threadGridPendingCountColumn.ReadOnly = true;
             // 
             // threadsContextMenu
             // 
@@ -731,6 +740,7 @@ namespace GChan.Forms
         private System.Windows.Forms.DataGridViewTextBoxColumn threadGridBoardCodeColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn Id;
         private System.Windows.Forms.DataGridViewTextBoxColumn threadGridFileCountColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn threadGridPendingCountColumn;
         private System.Windows.Forms.ToolStripMenuItem resumeDownloadsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem pauseDownloadsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem resumeDownloadsToolStripMenuItem1;

@@ -76,6 +76,19 @@ namespace GChan.Models.Trackers
             }
         }
 
+        public int PendingCount
+        {
+            get => SeenAssetIds
+                    .Where(id => id.Type == AssetType.Upload)
+                    .Except(SavedAssetIds)                    
+                    .Count();
+        }
+
+        public void NotifyPendingCountChanged()
+        {
+            MainForm.StaticInvoke(() => NotifyPropertyChanged(nameof(PendingCount)));
+        }
+
         public bool Gone { get; protected set; } = false;
 
         /// <summary>
@@ -141,6 +154,7 @@ namespace GChan.Models.Trackers
             FileCount = results.Uploads.Length;
             SeenAssetIds.AddRange(newAssets);
             Priority = ProcessPriority.Default; // Set priority to default. May have been set to "high" if thread was new.
+            this.NotifyPendingCountChanged();
 
             return new(removeFromQueue: false, newProcessables: newAssets);
         }

@@ -94,6 +94,7 @@ namespace GChan.Models
             await Utils.WriteFileBytesAsync(path, fileBytes, cancellationToken);
 
             Thread.SavedAssetIds.Add(Id);
+            Thread.NotifyPendingCountChanged();
 
             return new(removeFromQueue: true);
         }
