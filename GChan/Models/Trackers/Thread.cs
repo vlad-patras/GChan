@@ -1,10 +1,12 @@
 ﻿using GChan.Forms;
+using GChan.Helpers.Extensions;
 using GChan.Properties;
 using GChan.Services;
 using System;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using CancellationToken = System.Threading.CancellationToken;
@@ -114,12 +116,20 @@ namespace GChan.Models.Trackers
                 return new(removeFromQueue: true);
             }
 
-            // Should we be able to return more IDownloadables in DownloadResult to be added to the queue?
-            var results = await ScrapeThreadImpl(
-                Settings.Default.SaveHtml,
-                Settings.Default.SaveThumbnails,
-                cancellationToken
-            );
+            ThreadScrapeResults results;
+            try
+            {
+                results = await ScrapeThreadImpl(
+                    Settings.Default.SaveHtml,
+                    Settings.Default.SaveThumbnails,
+                    cancellationToken
+                );
+            }
+            catch (HttpRequestException ex) when (ex.IsGone())
+            {
+                await parameters.Hooks.ThreadRemoveSelf(this);
+                return new(removeFromQueue: true);
+            }
 
             LastScrape = DateTimeOffset.Now;
 
@@ -149,6 +159,8 @@ namespace GChan.Models.Trackers
         /// Website specific implementation for scraping a thread, returning html, uploads and thumbnail assets.<br/>
         /// Can return null to indicate the thread has had no change sice <see cref="Tracker.LastScrape"/>.
         /// </summary>
+        /// <exception cref="HttpRequestException"/>
+        /// <exception cref="TooManyRequestsException"/>
         protected abstract Task<ThreadScrapeResults> ScrapeThreadImpl(
             bool saveHtml,
             bool saveThumbnails,
