@@ -201,8 +201,11 @@ namespace GChan.Services
             }
             catch (TooManyRequestsException e)
             {
-                var delay = e.RetryAfter ?? TimeSpan.FromMinutes(1);
+                var retryAfterIsSet = e.RetryAfter.HasValue && e.RetryAfter.Value.Ticks > 0;
+                var delay = retryAfterIsSet ? e.RetryAfter : TimeSpan.FromMinutes(1);
                 logger.Warn("Got \"Too Many Requests\" (429) response while downloading. Backing off for approx {delay}.", delay);
+
+                this.tooManyRequestsDelay = delay;
 
                 // We got rate limited, the processable may still be able to succeed, requeue it.
                 Enqueue(processable, requeue: true);
