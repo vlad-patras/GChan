@@ -45,7 +45,16 @@ namespace GChan.Models.Trackers
         /// </summary>
         public string Subject
         {
-            get => hasScraped ? subject ?? NO_SUBJECT : "Loading...";
+            get
+            {
+                if (hasScraped)
+                {
+                    return subject ?? NO_SUBJECT;
+                }
+                
+                // TODO: It would be nice to say "Scraping Paused..." if the queue is currently paused, it poses some challenges though.
+                return "Loading...";
+            }
             set
             {
                 var update = subject != value;
@@ -53,7 +62,7 @@ namespace GChan.Models.Trackers
 
                 if (update)
                 {
-                    MainForm.StaticInvoke(() => NotifyPropertyChanged());
+                    NotifyPropertyChanged();
                 }
             }
         }
@@ -73,10 +82,30 @@ namespace GChan.Models.Trackers
 
                 if (update)
                 {
-                    MainForm.StaticInvoke(() => NotifyPropertyChanged());
+                    NotifyPropertyChanged();
                 }
             }
         }
+
+        /// <summary>
+        /// A count of files (uploads) that are known but have not yet been saved.
+        /// </summary>
+        public int? PendingFileCount
+        {
+            get
+            {
+                if (!hasScraped)
+                {
+                    return null;
+                }
+
+                var seenUploadsCount = SeenAssetIds.Count(id => id.Type == AssetType.Upload);
+                var savedUploadsCount = SavedAssetIds.Count(id => id.Type == AssetType.Upload);
+
+                return seenUploadsCount - savedUploadsCount;
+            }
+        }
+
 
         public bool Gone { get; protected set; } = false;
 
@@ -92,6 +121,8 @@ namespace GChan.Models.Trackers
         {
             Type = Type.Thread;
             Priority = priority;
+            SeenAssetIds.SetChanged += AssetsCollectionChanged;
+            SavedAssetIds.SetChanged += AssetsCollectionChanged;
 
             if (url.Contains("?"))
             {
@@ -101,12 +132,16 @@ namespace GChan.Models.Trackers
             }
         }
 
+        private void AssetsCollectionChanged()
+        {
+            NotifyPropertyChanged(nameof(PendingFileCount));
+        }
+
         public void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
         {
-#if DEBUG
-            logger.Trace($"NotifyPropertyChanged! Thread.{propertyName}.");
-#endif
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            logger.Trace("NotifyPropertyChanged! Thread.{0}.", propertyName);
+
+            MainForm.StaticInvoke(() => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName)));
         }
 
         public async Task<ProcessResult> ProcessAsync(ProcessableParams parameters, CancellationToken cancellationToken)

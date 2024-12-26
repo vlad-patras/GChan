@@ -55,11 +55,6 @@ namespace GChan.Forms
             listsTabControl = new System.Windows.Forms.TabControl();
             threadsTabPage = new System.Windows.Forms.TabPage();
             threadGridView = new Controls.PreferencesDataGridView();
-            threadGridSubjectColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            threadGridSiteColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            threadGridBoardCodeColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            Id = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            threadGridFileCountColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             threadsContextMenu = new System.Windows.Forms.ContextMenuStrip(components);
             openFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             openInBrowserToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -69,11 +64,28 @@ namespace GChan.Forms
             threadsBindingSource = new System.Windows.Forms.BindingSource(components);
             boardsTabPage = new System.Windows.Forms.TabPage();
             boardsGridView = new Controls.PreferencesDataGridView();
-            boardsBindingSource = new System.Windows.Forms.BindingSource(components);
+            boardsGridViewSiteColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            boardsGridViewBoardColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            boardsGridViewThreadsColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            threadCountDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            greatestThreadIdDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            shouldProcessDataGridViewCheckBoxColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            readyToProcessAtDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            priorityDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            urlDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            saveToDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            typeDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            siteDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            siteDisplayNameDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            boardCodeDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            lastScrapeDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            scrapingDataGridViewCheckBoxColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            cancellationTokenDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             boardsContextMenu = new System.Windows.Forms.ContextMenuStrip(components);
             boardsContextMenuOpenFolderButton = new System.Windows.Forms.ToolStripMenuItem();
             boardsContextMenuOpenInBrowserButton = new System.Windows.Forms.ToolStripMenuItem();
             boardsContextMenuRemoveButton = new System.Windows.Forms.ToolStripMenuItem();
+            boardsBindingSource = new System.Windows.Forms.BindingSource(components);
             addButton = new System.Windows.Forms.Button();
             urlTextBox = new System.Windows.Forms.TextBox();
             systemTrayNotifyIcon = new System.Windows.Forms.NotifyIcon(components);
@@ -85,9 +97,12 @@ namespace GChan.Forms
             clearAllButton = new System.Windows.Forms.Button();
             clipboardButton = new System.Windows.Forms.Button();
             toolTip = new System.Windows.Forms.ToolTip(components);
-            boardsGridViewSiteColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            boardsGridViewBoardColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            boardsGridViewThreadsColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            threadGridSubjectColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            threadGridSiteColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            threadGridBoardCodeColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            Id = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            threadGridFileCountColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            threadGridPendingColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             menuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)mainFormModelBindingSource).BeginInit();
             listsTabControl.SuspendLayout();
@@ -97,8 +112,8 @@ namespace GChan.Forms
             ((System.ComponentModel.ISupportInitialize)threadsBindingSource).BeginInit();
             boardsTabPage.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)boardsGridView).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)boardsBindingSource).BeginInit();
             boardsContextMenu.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)boardsBindingSource).BeginInit();
             systemTrayContextMenu.SuspendLayout();
             SuspendLayout();
             // 
@@ -298,7 +313,7 @@ namespace GChan.Forms
             threadGridView.BackgroundColor = System.Drawing.Color.White;
             threadGridView.BorderStyle = System.Windows.Forms.BorderStyle.None;
             threadGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            threadGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] { threadGridSubjectColumn, threadGridSiteColumn, threadGridBoardCodeColumn, Id, threadGridFileCountColumn });
+            threadGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] { threadGridSubjectColumn, threadGridSiteColumn, threadGridBoardCodeColumn, Id, threadGridFileCountColumn, threadGridPendingColumn });
             threadGridView.ContextMenuStrip = threadsContextMenu;
             threadGridView.DataSource = threadsBindingSource;
             dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
@@ -327,47 +342,6 @@ namespace GChan.Forms
             threadGridView.TabIndex = 1;
             threadGridView.DataError += threadGridView_DataError;
             threadGridView.MouseDown += gridView_MouseDown;
-            // 
-            // threadGridSubjectColumn
-            // 
-            threadGridSubjectColumn.DataPropertyName = "Subject";
-            threadGridSubjectColumn.FillWeight = 25F;
-            threadGridSubjectColumn.HeaderText = "Subject";
-            threadGridSubjectColumn.Name = "threadGridSubjectColumn";
-            threadGridSubjectColumn.ReadOnly = true;
-            // 
-            // threadGridSiteColumn
-            // 
-            threadGridSiteColumn.DataPropertyName = "SiteDisplayName";
-            threadGridSiteColumn.FillWeight = 8F;
-            threadGridSiteColumn.HeaderText = "Site";
-            threadGridSiteColumn.Name = "threadGridSiteColumn";
-            threadGridSiteColumn.ReadOnly = true;
-            threadGridSiteColumn.ToolTipText = "The website the thread is hosted on.";
-            // 
-            // threadGridBoardCodeColumn
-            // 
-            threadGridBoardCodeColumn.DataPropertyName = "BoardCode";
-            threadGridBoardCodeColumn.FillWeight = 8.387236F;
-            threadGridBoardCodeColumn.HeaderText = "Board";
-            threadGridBoardCodeColumn.Name = "threadGridBoardCodeColumn";
-            threadGridBoardCodeColumn.ReadOnly = true;
-            // 
-            // Id
-            // 
-            Id.DataPropertyName = "Id";
-            Id.FillWeight = 11F;
-            Id.HeaderText = "Id";
-            Id.Name = "Id";
-            Id.ReadOnly = true;
-            // 
-            // threadGridFileCountColumn
-            // 
-            threadGridFileCountColumn.DataPropertyName = "FileCount";
-            threadGridFileCountColumn.FillWeight = 8.387236F;
-            threadGridFileCountColumn.HeaderText = "File Count";
-            threadGridFileCountColumn.Name = "threadGridFileCountColumn";
-            threadGridFileCountColumn.ReadOnly = true;
             // 
             // threadsContextMenu
             // 
@@ -453,7 +427,7 @@ namespace GChan.Forms
             boardsGridView.BackgroundColor = System.Drawing.Color.White;
             boardsGridView.BorderStyle = System.Windows.Forms.BorderStyle.None;
             boardsGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            boardsGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] { boardsGridViewSiteColumn, boardsGridViewBoardColumn, boardsGridViewThreadsColumn });
+            boardsGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] { boardsGridViewSiteColumn, boardsGridViewBoardColumn, boardsGridViewThreadsColumn, threadCountDataGridViewTextBoxColumn, greatestThreadIdDataGridViewTextBoxColumn, shouldProcessDataGridViewCheckBoxColumn, readyToProcessAtDataGridViewTextBoxColumn, priorityDataGridViewTextBoxColumn, urlDataGridViewTextBoxColumn, saveToDataGridViewTextBoxColumn, typeDataGridViewTextBoxColumn, siteDataGridViewTextBoxColumn, siteDisplayNameDataGridViewTextBoxColumn, boardCodeDataGridViewTextBoxColumn, lastScrapeDataGridViewTextBoxColumn, scrapingDataGridViewCheckBoxColumn, cancellationTokenDataGridViewTextBoxColumn });
             boardsGridView.ContextMenuStrip = boardsContextMenu;
             boardsGridView.DataSource = boardsBindingSource;
             dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
@@ -482,10 +456,124 @@ namespace GChan.Forms
             boardsGridView.TabIndex = 2;
             boardsGridView.MouseDown += gridView_MouseDown;
             // 
-            // boardsBindingSource
+            // boardsGridViewSiteColumn
             // 
-            boardsBindingSource.DataMember = "Boards";
-            boardsBindingSource.DataSource = mainFormModelBindingSource;
+            boardsGridViewSiteColumn.DataPropertyName = "SiteDisplayName";
+            boardsGridViewSiteColumn.HeaderText = "Site";
+            boardsGridViewSiteColumn.Name = "boardsGridViewSiteColumn";
+            boardsGridViewSiteColumn.ReadOnly = true;
+            // 
+            // boardsGridViewBoardColumn
+            // 
+            boardsGridViewBoardColumn.DataPropertyName = "BoardCode";
+            boardsGridViewBoardColumn.HeaderText = "Board";
+            boardsGridViewBoardColumn.Name = "boardsGridViewBoardColumn";
+            boardsGridViewBoardColumn.ReadOnly = true;
+            // 
+            // boardsGridViewThreadsColumn
+            // 
+            boardsGridViewThreadsColumn.DataPropertyName = "ThreadCount";
+            boardsGridViewThreadsColumn.HeaderText = "Threads";
+            boardsGridViewThreadsColumn.Name = "boardsGridViewThreadsColumn";
+            boardsGridViewThreadsColumn.ReadOnly = true;
+            // 
+            // threadCountDataGridViewTextBoxColumn
+            // 
+            threadCountDataGridViewTextBoxColumn.DataPropertyName = "ThreadCount";
+            threadCountDataGridViewTextBoxColumn.HeaderText = "ThreadCount";
+            threadCountDataGridViewTextBoxColumn.Name = "threadCountDataGridViewTextBoxColumn";
+            threadCountDataGridViewTextBoxColumn.ReadOnly = true;
+            // 
+            // greatestThreadIdDataGridViewTextBoxColumn
+            // 
+            greatestThreadIdDataGridViewTextBoxColumn.DataPropertyName = "GreatestThreadId";
+            greatestThreadIdDataGridViewTextBoxColumn.HeaderText = "GreatestThreadId";
+            greatestThreadIdDataGridViewTextBoxColumn.Name = "greatestThreadIdDataGridViewTextBoxColumn";
+            greatestThreadIdDataGridViewTextBoxColumn.ReadOnly = true;
+            // 
+            // shouldProcessDataGridViewCheckBoxColumn
+            // 
+            shouldProcessDataGridViewCheckBoxColumn.DataPropertyName = "ShouldProcess";
+            shouldProcessDataGridViewCheckBoxColumn.HeaderText = "ShouldProcess";
+            shouldProcessDataGridViewCheckBoxColumn.Name = "shouldProcessDataGridViewCheckBoxColumn";
+            shouldProcessDataGridViewCheckBoxColumn.ReadOnly = true;
+            // 
+            // readyToProcessAtDataGridViewTextBoxColumn
+            // 
+            readyToProcessAtDataGridViewTextBoxColumn.DataPropertyName = "ReadyToProcessAt";
+            readyToProcessAtDataGridViewTextBoxColumn.HeaderText = "ReadyToProcessAt";
+            readyToProcessAtDataGridViewTextBoxColumn.Name = "readyToProcessAtDataGridViewTextBoxColumn";
+            readyToProcessAtDataGridViewTextBoxColumn.ReadOnly = true;
+            // 
+            // priorityDataGridViewTextBoxColumn
+            // 
+            priorityDataGridViewTextBoxColumn.DataPropertyName = "Priority";
+            priorityDataGridViewTextBoxColumn.HeaderText = "Priority";
+            priorityDataGridViewTextBoxColumn.Name = "priorityDataGridViewTextBoxColumn";
+            priorityDataGridViewTextBoxColumn.ReadOnly = true;
+            // 
+            // urlDataGridViewTextBoxColumn
+            // 
+            urlDataGridViewTextBoxColumn.DataPropertyName = "Url";
+            urlDataGridViewTextBoxColumn.HeaderText = "Url";
+            urlDataGridViewTextBoxColumn.Name = "urlDataGridViewTextBoxColumn";
+            urlDataGridViewTextBoxColumn.ReadOnly = true;
+            // 
+            // saveToDataGridViewTextBoxColumn
+            // 
+            saveToDataGridViewTextBoxColumn.DataPropertyName = "SaveTo";
+            saveToDataGridViewTextBoxColumn.HeaderText = "SaveTo";
+            saveToDataGridViewTextBoxColumn.Name = "saveToDataGridViewTextBoxColumn";
+            saveToDataGridViewTextBoxColumn.ReadOnly = true;
+            // 
+            // typeDataGridViewTextBoxColumn
+            // 
+            typeDataGridViewTextBoxColumn.DataPropertyName = "Type";
+            typeDataGridViewTextBoxColumn.HeaderText = "Type";
+            typeDataGridViewTextBoxColumn.Name = "typeDataGridViewTextBoxColumn";
+            typeDataGridViewTextBoxColumn.ReadOnly = true;
+            // 
+            // siteDataGridViewTextBoxColumn
+            // 
+            siteDataGridViewTextBoxColumn.DataPropertyName = "Site";
+            siteDataGridViewTextBoxColumn.HeaderText = "Site";
+            siteDataGridViewTextBoxColumn.Name = "siteDataGridViewTextBoxColumn";
+            siteDataGridViewTextBoxColumn.ReadOnly = true;
+            // 
+            // siteDisplayNameDataGridViewTextBoxColumn
+            // 
+            siteDisplayNameDataGridViewTextBoxColumn.DataPropertyName = "SiteDisplayName";
+            siteDisplayNameDataGridViewTextBoxColumn.HeaderText = "SiteDisplayName";
+            siteDisplayNameDataGridViewTextBoxColumn.Name = "siteDisplayNameDataGridViewTextBoxColumn";
+            siteDisplayNameDataGridViewTextBoxColumn.ReadOnly = true;
+            // 
+            // boardCodeDataGridViewTextBoxColumn
+            // 
+            boardCodeDataGridViewTextBoxColumn.DataPropertyName = "BoardCode";
+            boardCodeDataGridViewTextBoxColumn.HeaderText = "BoardCode";
+            boardCodeDataGridViewTextBoxColumn.Name = "boardCodeDataGridViewTextBoxColumn";
+            boardCodeDataGridViewTextBoxColumn.ReadOnly = true;
+            // 
+            // lastScrapeDataGridViewTextBoxColumn
+            // 
+            lastScrapeDataGridViewTextBoxColumn.DataPropertyName = "LastScrape";
+            lastScrapeDataGridViewTextBoxColumn.HeaderText = "LastScrape";
+            lastScrapeDataGridViewTextBoxColumn.Name = "lastScrapeDataGridViewTextBoxColumn";
+            lastScrapeDataGridViewTextBoxColumn.ReadOnly = true;
+            // 
+            // scrapingDataGridViewCheckBoxColumn
+            // 
+            scrapingDataGridViewCheckBoxColumn.DataPropertyName = "Scraping";
+            scrapingDataGridViewCheckBoxColumn.HeaderText = "Scraping";
+            scrapingDataGridViewCheckBoxColumn.Name = "scrapingDataGridViewCheckBoxColumn";
+            scrapingDataGridViewCheckBoxColumn.ReadOnly = true;
+            // 
+            // cancellationTokenDataGridViewTextBoxColumn
+            // 
+            cancellationTokenDataGridViewTextBoxColumn.DataPropertyName = "CancellationToken";
+            cancellationTokenDataGridViewTextBoxColumn.HeaderText = "CancellationToken";
+            cancellationTokenDataGridViewTextBoxColumn.Name = "cancellationTokenDataGridViewTextBoxColumn";
+            cancellationTokenDataGridViewTextBoxColumn.ReadOnly = true;
             // 
             // boardsContextMenu
             // 
@@ -520,6 +608,11 @@ namespace GChan.Forms
             boardsContextMenuRemoveButton.Size = new System.Drawing.Size(202, 22);
             boardsContextMenuRemoveButton.Text = "Remove";
             boardsContextMenuRemoveButton.Click += deleteBoardToolStripMenuItem_ClickAsync;
+            // 
+            // boardsBindingSource
+            // 
+            boardsBindingSource.DataMember = "Boards";
+            boardsBindingSource.DataSource = mainFormModelBindingSource;
             // 
             // addButton
             // 
@@ -617,26 +710,59 @@ namespace GChan.Forms
             clipboardButton.UseVisualStyleBackColor = true;
             clipboardButton.Click += clipboardButton_Click;
             // 
-            // boardsGridViewSiteColumn
+            // threadGridSubjectColumn
             // 
-            boardsGridViewSiteColumn.DataPropertyName = "SiteDisplayName";
-            boardsGridViewSiteColumn.HeaderText = "Site";
-            boardsGridViewSiteColumn.Name = "boardsGridViewSiteColumn";
-            boardsGridViewSiteColumn.ReadOnly = true;
+            threadGridSubjectColumn.DataPropertyName = "Subject";
+            threadGridSubjectColumn.FillWeight = 25F;
+            threadGridSubjectColumn.HeaderText = "Subject";
+            threadGridSubjectColumn.Name = "threadGridSubjectColumn";
+            threadGridSubjectColumn.ReadOnly = true;
+            threadGridSubjectColumn.ToolTipText = "The subject of the thread (can also be taken from the username or description, or overwritten by you).";
             // 
-            // boardsGridViewBoardColumn
+            // threadGridSiteColumn
             // 
-            boardsGridViewBoardColumn.DataPropertyName = "BoardCode";
-            boardsGridViewBoardColumn.HeaderText = "Board";
-            boardsGridViewBoardColumn.Name = "boardsGridViewBoardColumn";
-            boardsGridViewBoardColumn.ReadOnly = true;
+            threadGridSiteColumn.DataPropertyName = "SiteDisplayName";
+            threadGridSiteColumn.FillWeight = 8F;
+            threadGridSiteColumn.HeaderText = "Site";
+            threadGridSiteColumn.Name = "threadGridSiteColumn";
+            threadGridSiteColumn.ReadOnly = true;
+            threadGridSiteColumn.ToolTipText = "The website the thread is hosted on.";
             // 
-            // boardsGridViewThreadsColumn
+            // threadGridBoardCodeColumn
             // 
-            boardsGridViewThreadsColumn.DataPropertyName = "ThreadCount";
-            boardsGridViewThreadsColumn.HeaderText = "Threads";
-            boardsGridViewThreadsColumn.Name = "boardsGridViewThreadsColumn";
-            boardsGridViewThreadsColumn.ReadOnly = true;
+            threadGridBoardCodeColumn.DataPropertyName = "BoardCode";
+            threadGridBoardCodeColumn.FillWeight = 8.387236F;
+            threadGridBoardCodeColumn.HeaderText = "Board";
+            threadGridBoardCodeColumn.Name = "threadGridBoardCodeColumn";
+            threadGridBoardCodeColumn.ReadOnly = true;
+            threadGridBoardCodeColumn.ToolTipText = "The thread's board code.";
+            // 
+            // Id
+            // 
+            Id.DataPropertyName = "Id";
+            Id.FillWeight = 11F;
+            Id.HeaderText = "Id";
+            Id.Name = "Id";
+            Id.ReadOnly = true;
+            Id.ToolTipText = "The thread identifier.";
+            // 
+            // threadGridFileCountColumn
+            // 
+            threadGridFileCountColumn.DataPropertyName = "FileCount";
+            threadGridFileCountColumn.FillWeight = 8.387236F;
+            threadGridFileCountColumn.HeaderText = "Files";
+            threadGridFileCountColumn.Name = "threadGridFileCountColumn";
+            threadGridFileCountColumn.ReadOnly = true;
+            threadGridFileCountColumn.ToolTipText = "The amount of files in the thread.";
+            // 
+            // threadGridPendingColumn
+            // 
+            threadGridPendingColumn.DataPropertyName = "PendingFileCount";
+            threadGridPendingColumn.FillWeight = 8.387236F;
+            threadGridPendingColumn.HeaderText = "Pending";
+            threadGridPendingColumn.Name = "threadGridPendingColumn";
+            threadGridPendingColumn.ReadOnly = true;
+            threadGridPendingColumn.ToolTipText = "The amount of files in queue pending download (excluding thumbnails).";
             // 
             // MainForm
             // 
@@ -672,8 +798,8 @@ namespace GChan.Forms
             ((System.ComponentModel.ISupportInitialize)threadsBindingSource).EndInit();
             boardsTabPage.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)boardsGridView).EndInit();
-            ((System.ComponentModel.ISupportInitialize)boardsBindingSource).EndInit();
             boardsContextMenu.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)boardsBindingSource).EndInit();
             systemTrayContextMenu.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
@@ -726,11 +852,6 @@ namespace GChan.Forms
         private System.Windows.Forms.ToolStripMenuItem kofiToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem payPalToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem gitHubSponsorToolStripMenuItem;
-        private System.Windows.Forms.DataGridViewTextBoxColumn threadGridSubjectColumn;
-        private System.Windows.Forms.DataGridViewTextBoxColumn threadGridSiteColumn;
-        private System.Windows.Forms.DataGridViewTextBoxColumn threadGridBoardCodeColumn;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Id;
-        private System.Windows.Forms.DataGridViewTextBoxColumn threadGridFileCountColumn;
         private System.Windows.Forms.ToolStripMenuItem resumeDownloadsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem pauseDownloadsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem resumeDownloadsToolStripMenuItem1;
@@ -740,6 +861,26 @@ namespace GChan.Forms
         private System.Windows.Forms.DataGridViewTextBoxColumn boardsGridViewSiteColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn boardsGridViewBoardColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn boardsGridViewThreadsColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn threadCountDataGridViewTextBoxColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn greatestThreadIdDataGridViewTextBoxColumn;
+        private System.Windows.Forms.DataGridViewCheckBoxColumn shouldProcessDataGridViewCheckBoxColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn readyToProcessAtDataGridViewTextBoxColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn priorityDataGridViewTextBoxColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn urlDataGridViewTextBoxColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn saveToDataGridViewTextBoxColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn typeDataGridViewTextBoxColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn siteDataGridViewTextBoxColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn siteDisplayNameDataGridViewTextBoxColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn boardCodeDataGridViewTextBoxColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn lastScrapeDataGridViewTextBoxColumn;
+        private System.Windows.Forms.DataGridViewCheckBoxColumn scrapingDataGridViewCheckBoxColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn cancellationTokenDataGridViewTextBoxColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn threadGridSubjectColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn threadGridSiteColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn threadGridBoardCodeColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Id;
+        private System.Windows.Forms.DataGridViewTextBoxColumn threadGridFileCountColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn threadGridPendingColumn;
     }
 }
 

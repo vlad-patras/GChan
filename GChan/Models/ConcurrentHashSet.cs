@@ -6,13 +6,18 @@ using System.Threading;
 
 namespace GChan.Models
 {
+    public delegate void SetChangedEventHandler();
+
     /// <summary>
-    /// Credit: Ben Mosher https://stackoverflow.com/a/18923091/8306962
+    /// A thread-safe hash-set (credit <see href="https://stackoverflow.com/a/18923091/8306962">Ben Mosher</see>).<br/>
+    /// Also raises change events via <see cref="SetChanged"/>.
     /// </summary>
     public class ConcurrentHashSet<T> : IEnumerable<T>, IDisposable
     {
         protected readonly ReaderWriterLockSlim locker = new(LockRecursionPolicy.SupportsRecursion);
-        protected readonly HashSet<T> set = new();
+        protected readonly HashSet<T> set = [];
+
+        public event SetChangedEventHandler SetChanged;
 
         public int Count
         {
@@ -40,7 +45,14 @@ namespace GChan.Models
 
             try
             {
-                return set.Add(item);
+                var didAdd = set.Add(item);
+
+                if (didAdd)
+                {
+                    SetChanged?.Invoke();
+                }
+
+                return didAdd;
             }
             finally
             {
@@ -51,16 +63,22 @@ namespace GChan.Models
             }
         }
 
-        public void AddRange(IEnumerable<T> items)
+        public bool AddRange(IEnumerable<T> items)
         {
             locker.EnterWriteLock();
 
             try
             {
-                foreach (T item in items)
+                var results = items.Select(set.Add).ToArray();
+
+                var anyAdditions = results.Any(r => r == true);
+
+                if (anyAdditions)
                 {
-                    set.Add(item);
+                    SetChanged?.Invoke();
                 }
+
+                return anyAdditions;
             }
             finally
             {
@@ -74,9 +92,17 @@ namespace GChan.Models
         public void Clear()
         {
             locker.EnterWriteLock();
+
             try
             {
+                var setHadItems = set.Any();
+
                 set.Clear();
+
+                if (setHadItems)
+                {
+                    SetChanged?.Invoke();
+                }
             }
             finally
             {
@@ -110,7 +136,14 @@ namespace GChan.Models
 
             try
             {
-                return set.Remove(item);
+                var didRemove = set.Remove(item);
+
+                if (didRemove)
+                {
+                    SetChanged?.Invoke();
+                }
+
+                return didRemove;
             }
             finally
             {

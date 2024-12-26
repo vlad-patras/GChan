@@ -1,5 +1,7 @@
 ﻿Version 6 & Onwards:
-	Add pause/resume feature, accessible from main UI & system tray. Should be easy with the new processing queue.
+	When scraping is paused, new threads should say "Paused..." instead of "Loading..." or something.
+	Icons for donations & pause/resume (seemingly totally busted in .net core).
+	Fix log files going straight to I:\ drive.
 
 
 

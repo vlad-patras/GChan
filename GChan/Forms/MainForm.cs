@@ -36,6 +36,9 @@ namespace GChan.Forms
             instance = this;
         }
 
+        /// <summary>
+        /// Invoke <paramref name="action"/> on the form (on main thread) if not disposed/disposing.
+        /// </summary>
         public static void StaticInvoke(Action action)
         {
             if (!instance.Disposing && !instance.IsDisposed)
