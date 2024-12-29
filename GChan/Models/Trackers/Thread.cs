@@ -26,12 +26,12 @@ namespace GChan.Models.Trackers
         /// <summary>
         /// Assets that no longer need to be put in processing. This should load the saved assets from the database.
         /// </summary>
-        public AssetIdsCollection SeenAssetIds { get; protected init; } = [];
+        public AssetIdsCollection SeenAssetIds { get; private init; } = [];
 
         /// <summary>
         /// Assets that have successfully completed processing. This should be saved in the database.
         /// </summary>
-        public AssetIdsCollection SavedAssetIds { get; protected init; } = [];
+        public AssetIdsCollection SavedAssetIds { get; private init; } = [];
 
         public bool ShouldProcess => !Gone && !cancellationTokenSource.IsCancellationRequested;
 

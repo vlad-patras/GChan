@@ -22,13 +22,13 @@ namespace GChan.Models
     [JsonConverter(typeof(AssetIdJsonConverter))]
     public class AssetId : IEquatable<AssetId>
     {
-        public AssetType Type { get; set; }
+        public AssetType Type { get; private init; }
 
         /// <summary>
         /// Unique identifier for this asset. It may be a composite of multiple different locators (e.g. `4chan.threadId.replyId`).
         /// May contain anything but a colon ":".
         /// </summary>
-        public string Identifier { get; set; }
+        public string Identifier { get; private init; }
 
         /// <summary>
         /// Expecting the string in format "Type:Identifier"
@@ -81,6 +81,11 @@ namespace GChan.Models
         {
             // Note this only works because the properties of this class have no deeper members.
             return (AssetId)MemberwiseClone();
+        }
+
+        public override bool Equals(object obj)
+        {
+            return Equals(obj as AssetId);
         }
     }
 

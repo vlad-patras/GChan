@@ -48,8 +48,8 @@ namespace GChan.Models.Trackers.Sites
             this.Id = data.Id;
             this.Subject = data.Subject;
             this.FileCount = data.FileCount;
-            this.SavedAssetIds = data.SavedAssetIds.Clone();
-            this.SeenAssetIds = data.SavedAssetIds.Clone();
+            this.SavedAssetIds.AddRange(data.SavedAssetIds);
+            this.SeenAssetIds.AddRange(data.SavedAssetIds);
 
             // Only populate LastScrape if it appears that all uploads have been saved.
             // This will cause the next dequeue of this thread to be downloaded regardless of when the last scrape was and
