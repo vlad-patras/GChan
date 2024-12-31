@@ -7,6 +7,7 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -244,12 +245,12 @@ namespace GChan.Models.Trackers.Sites
         {
             var post = jObject.SelectToken("posts[0]") ?? throw new Exception("A thread must have a first post.");
 
-            var sub = post["sub"]?.Value<string>();
+            var sub = WebUtility.HtmlDecode(post["sub"]?.Value<string>());  // Subject is HTML encoded, so we must decode.
 
             var name = post["name"]?.Value<string>();
-            var nameOk = name != "Anonymous";   // Use name if not "Anonymous". Users often put the subject in the name field.
+            var nameOk = name != "Anonymous";   // Use name if not "Anonymous". Users often mistakenly put the subject in the name field.
 
-            var comment = post["com"]?.Value<string>(); // "com" (comment) is the text of the post.
+            var comment = WebUtility.HtmlDecode(post["com"]?.Value<string>()); // "com" (comment) is the text of the post. It is HTML encoded, so we must decode.
             var commentOk = comment != null && comment.Length < 64 && !comment.Contains("<br>");    // Use the comment as the subject if it is present, not too long and doesn't have any linebreaks.
 
             var result = sub ?? (nameOk ? name : null) ?? (commentOk ? comment : null);
