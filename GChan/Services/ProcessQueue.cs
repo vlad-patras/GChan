@@ -22,9 +22,7 @@ namespace GChan.Services
     {
 
         private static readonly ILogger logger = LogManager.GetCurrentClassLogger();
-        private readonly ConcurrentDistinctQueue<IProcessable> highPriorityQueue = new(LockRecursionPolicy.SupportsRecursion);
-        private readonly ConcurrentDistinctQueue<IProcessable> defaultPriorityQueue = new(LockRecursionPolicy.SupportsRecursion);
-        private readonly ConcurrentDistinctQueue<IProcessable> lowPriorityQueue = new(LockRecursionPolicy.SupportsRecursion);
+        private readonly ConcurrentDistinctPriorityQueue<IProcessable, ProcessPriority> queue = new(LockRecursionPolicy.SupportsRecursion);
         private readonly AsyncManualResetEvent trackerAddedSignal = new();
         private readonly AsyncManualResetEvent resumeSignal = new();
         private readonly ProcessPool pool;
@@ -76,13 +74,7 @@ namespace GChan.Services
 
         public void Enqueue(IProcessable processable, bool requeue = false)
         {
-            var wasQueued = processable.Priority switch
-            {
-                ProcessPriority.High => highPriorityQueue.Enqueue(processable),
-                ProcessPriority.Default => defaultPriorityQueue.Enqueue(processable),
-                ProcessPriority.Low => lowPriorityQueue.Enqueue(processable),
-                _ => throw new InvalidOperationException($"Unknown process priority {processable.Priority}.")
-            };
+            var wasQueued = queue.Enqueue(processable, processable.Priority);
 
             if (wasQueued)
             {
@@ -149,21 +141,6 @@ namespace GChan.Services
             }
         }
 
-        /// <summary>
-        /// Dequeues processables until one is found that desires being processed, or the queue is depleted (returns null).
-        /// </summary>
-        private IProcessable? MaybeDequeue()
-        {
-            var processable = DequeueFrom(highPriorityQueue) ?? DequeueFrom(defaultPriorityQueue) ?? DequeueFrom(lowPriorityQueue);
-
-            if (processable == null)
-            {
-                logger.Trace("Processable queues contained none or no ready to process items.");
-            }
-
-            return processable;
-        }
-
         private async void HandleResult(IProcessable processable, Task<ProcessResult> completedTask)
         {
             try
@@ -218,7 +195,10 @@ namespace GChan.Services
             }
         }
 
-        private static IProcessable? DequeueFrom(ConcurrentDistinctQueue<IProcessable> queue)
+        /// <summary>
+        /// Dequeues processables until one is found that desires being processed, or the queue is depleted (returns null).
+        /// </summary>
+        private IProcessable? MaybeDequeue()
         {
             var deferredProcessables = new List<IProcessable>();
 
@@ -226,7 +206,7 @@ namespace GChan.Services
             {
                 while (true)
                 {
-                    if (queue.TryDequeue(out var processable))
+                    if (queue.TryDequeue(out var processable, out var priority))
                     {
                         if (processable.ShouldProcess)
                         {
@@ -247,6 +227,8 @@ namespace GChan.Services
                         }
                     }
 
+                    logger.Trace("Processable queue contained none or no ready to process items.");
+
                     return null;
                 }
             }
@@ -254,7 +236,7 @@ namespace GChan.Services
             {
                 foreach (var deferredProcessable in deferredProcessables)
                 {
-                    queue.Enqueue(deferredProcessable);
+                    queue.Enqueue(deferredProcessable, deferredProcessable.Priority);
                 }
             }
         }

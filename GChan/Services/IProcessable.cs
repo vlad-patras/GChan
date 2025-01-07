@@ -41,10 +41,13 @@ namespace GChan.Services
         }
     }
 
+    /// <summary>
+    /// The priority queue this is used with will dequeue the lowest priority first, so sort with highest priority first.
+    /// </summary>
     public enum ProcessPriority
     {
-        Default,
         High,
+        Default,
         Low,
     }
 
