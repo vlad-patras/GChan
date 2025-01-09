@@ -76,13 +76,10 @@ namespace GChan.Services
         {
             var wasQueued = queue.Enqueue(processable, processable.Priority);
 
-            if (wasQueued)
+            if (wasQueued && logger.IsTraceEnabled)
             {
-                if (logger.IsTraceEnabled)  // Check log level is enabled to avoid unnecessary string concatenation.
-                {
-                    var operation = requeue ? "Requeued" : "Enqueued";
-                    logger.Trace($"{operation} processable {{processable}} with priority {{priority}}.", processable, processable.Priority);
-                }
+                var operation = requeue ? "Requeued" : "Enqueued";
+                logger.Trace($"{operation} processable {{processable}} with priority {{priority}}.", processable, processable.Priority);
             }
 
             trackerAddedSignal.Set();
@@ -204,33 +201,29 @@ namespace GChan.Services
 
             try
             {
-                while (true)
+                while (queue.TryDequeue(out var processable, out var priority))
                 {
-                    if (queue.TryDequeue(out var processable, out var priority))
+                    if (processable.ShouldProcess)
                     {
-                        if (processable.ShouldProcess)
+                        if (processable.ReadyToProcessAt == null || processable.ReadyToProcessAt <= DateTimeOffset.Now)
                         {
-                            if (processable.ReadyToProcessAt == null || processable.ReadyToProcessAt <= DateTimeOffset.Now)
-                            {
-                                logger.Trace("Dequeued processable {0}.", processable);
-                                return processable;
-                            }
-                            else
-                            {
-                                logger.Trace("Deferring processable {0}. Ready to process at {1}.", processable, processable.ReadyToProcessAt);
-                                deferredProcessables.Add(processable);
-                            }
+                            logger.Trace("Dequeued processable {0}.", processable);
+                            return processable;
                         }
                         else
                         {
-                            logger.Trace("Discarding dequeued processable {0}.", processable);
+                            logger.Trace("Deferring processable {0}. Ready to process at {1}.", processable, processable.ReadyToProcessAt);
+                            deferredProcessables.Add(processable);
                         }
                     }
-
-                    logger.Trace("Processable queue contained none or no ready to process items.");
-
-                    return null;
+                    else
+                    {
+                        logger.Trace("Discarding dequeued processable {0}.", processable);
+                    }
                 }
+
+                logger.Trace("Processable queue contained none or no ready-to-process items.");
+                return null;
             }
             finally
             {
