@@ -2,8 +2,10 @@
 using GChan.Forms;
 using GChan.Properties;
 using NLog;
+using NLog.Targets;
 using System;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading;
@@ -56,8 +58,7 @@ namespace GChan
         {
             arguments = args;
 
-            Directory.CreateDirectory(LOGS_PATH);
-            LogManager.Configuration.Variables["logsDirectory"] = LOGS_PATH;
+            UpdateNLogLogFilePath();
 
 #if DEBUG
             SetLogLevelsToTrace();
@@ -108,6 +109,14 @@ namespace GChan
                     new IntPtr(0xEFEF)
                 );
             }
+        }
+
+        private static void UpdateNLogLogFilePath()
+        {
+            Directory.CreateDirectory(LOGS_PATH);
+            var logTarget = LogManager.Configuration.AllTargets.OfType<FileTarget>().Single();
+            logTarget.FileName = Path.Combine(LOGS_PATH, $"{NAME}.log");
+            LogManager.ReconfigExistingLoggers();
         }
 
         private static void SetLogLevelsToTrace()
